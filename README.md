@@ -10,10 +10,10 @@ Essa é a API do projeto, que também conta com um front-end e uma landing page,
 ## [Jira](https://diegopriessdev.atlassian.net/jira/software/projects/KAN/boards/1)
 
 ## Arquitetura C4
-[NV.1](https://drive.google.com/file/d/1bnCtQRtOh_jkotOa571YO-D-5gz6OyUG/view?usp=drive_link)
-[NV.2](https://drive.google.com/file/d/1iDp1fNpt0tBtuexK8ZKnvORQkx-cX0R_/view?usp=drive_link)
-[NV.3](https://drive.google.com/file/d/1ix0lH-rm1R2yDmxaQIuFHQA3FDDvZRKx/view?usp=drive_link)
-[NV.4](https://drive.google.com/file/d/1T5Rue1kjM4t-F5wC1WwuMMAc6OAbDRc-/view?usp=drive_link)
+- [NV.1](https://drive.google.com/file/d/1bnCtQRtOh_jkotOa571YO-D-5gz6OyUG/view?usp=drive_link)
+- [NV.2](https://drive.google.com/file/d/1iDp1fNpt0tBtuexK8ZKnvORQkx-cX0R_/view?usp=drive_link)
+- [NV.3](https://drive.google.com/file/d/1ix0lH-rm1R2yDmxaQIuFHQA3FDDvZRKx/view?usp=drive_link)
+- [NV.4](https://drive.google.com/file/d/1T5Rue1kjM4t-F5wC1WwuMMAc6OAbDRc-/view?usp=drive_link)
 
 ## Funcionalidades Principais
 - Gestão de orçamentos com detalhamento de materiais, horas trabalhadas e clientes.
