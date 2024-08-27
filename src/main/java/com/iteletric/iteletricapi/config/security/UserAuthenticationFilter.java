@@ -29,28 +29,31 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (checkIfEndpointIsNotPublic(request)) {
-                String token = recoveryToken(request);
-                if (token != null) {
-                    String subject = jwtTokenService.getSubjectFromToken(token);
-                    User user = userRepository.findByEmail(subject).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
-                    UserDetailsImpl userDetails = new UserDetailsImpl(user);
-
-                    Authentication authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Token ausente ou inválido.");
-                    return;
-                }
-            }
+            if (checkIfEndpointIsNotPublic(request)) authenticate(request, response, filterChain);
             filterChain.doFilter(request, response);
         } catch (RuntimeException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write(e.getMessage());
         }
+    }
+
+    private void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String token = recoveryToken(request);
+
+        if (token == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token ausente ou inválido.");
+            return;
+        }
+
+        String subject = jwtTokenService.getSubjectFromToken(token);
+        User user = userRepository.findByEmail(subject).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        UserDetailsImpl userDetails = new UserDetailsImpl(user);
+
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private String recoveryToken(HttpServletRequest request) {

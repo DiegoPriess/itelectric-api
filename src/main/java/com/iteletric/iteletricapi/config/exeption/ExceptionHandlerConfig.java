@@ -5,7 +5,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,11 +28,9 @@ public class ExceptionHandlerConfig {
         return new ResponseEntity<>(new BusinessExceptionResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-
     private record ValidationErrorData(String campo, String mensagem) {
         public ValidationErrorData(FieldError error) {
             this(error.getField(), error.getDefaultMessage());
         }
     }
-
 }

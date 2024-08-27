@@ -34,6 +34,9 @@ public class User {
     @Column(name="password", nullable = false)
     private String password;
 
+    @Column(name="deleted", nullable = false, columnDefinition = "INTEGER DEFAULT 0")
+    private Integer deleted = 0;
+
     @Column(name="date_created")
     @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
