@@ -29,7 +29,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (checkIfEndpointIsNotPublic(request)) authenticate(request, response, filterChain);
+            if (checkIfEndpointIsNotPublic(request)) authenticate(request, response);
             filterChain.doFilter(request, response);
         } catch (RuntimeException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -37,7 +37,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    private void authenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String token = recoveryToken(request);
 
         if (token == null) {
