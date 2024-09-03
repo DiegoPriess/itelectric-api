@@ -1,6 +1,7 @@
 package com.iteletric.iteletricapi.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.iteletric.iteletricapi.config.baseEntities.BaseModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,17 +36,7 @@ public class User {
     private String password;
 
     @Column(name="deleted", nullable = false, columnDefinition = "INTEGER DEFAULT 0")
-    private Integer deleted = 0;
-
-    @Column(name="date_created")
-    @CreationTimestamp
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateCreated;
-
-    @Column(name="date_updated")
-    @UpdateTimestamp
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateUpdated;
+    private Integer deleted;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name="users_roles",

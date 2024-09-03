@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.enums;
+package com.iteletric.iteletricapi.enums.user;
 
 import lombok.Getter;
 

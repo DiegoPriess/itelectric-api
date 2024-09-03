@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.dtos.user;
 
-import com.iteletric.iteletricapi.enums.RoleName;
+import com.iteletric.iteletricapi.enums.user.RoleName;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

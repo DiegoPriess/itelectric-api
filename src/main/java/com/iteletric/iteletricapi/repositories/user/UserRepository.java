@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.repositories;
+package com.iteletric.iteletricapi.repositories.user;
 
 import com.iteletric.iteletricapi.models.User;
 

@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.models;
 
-import com.iteletric.iteletricapi.enums.RoleName;
+import com.iteletric.iteletricapi.enums.user.RoleName;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

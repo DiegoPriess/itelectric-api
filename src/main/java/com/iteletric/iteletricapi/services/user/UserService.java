@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.services;
+package com.iteletric.iteletricapi.services.user;
 
 import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.config.security.JwtTokenService;
@@ -9,7 +9,7 @@ import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.models.Role;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.models.UserDetailsImpl;
-import com.iteletric.iteletricapi.repositories.UserRepository;
+import com.iteletric.iteletricapi.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +55,7 @@ public class UserService {
 						   .email(request.email())
 						   .password(securityConfiguration.passwordEncoder().encode(request.password()))
 						   .roles(List.of(Role.builder().name(request.role()).build()))
+						   .deleted(0)
 						   .build();
 
 		repository.save(newUser);
