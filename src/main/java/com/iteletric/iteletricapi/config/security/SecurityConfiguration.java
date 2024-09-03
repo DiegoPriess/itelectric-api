@@ -1,6 +1,5 @@
 package com.iteletric.iteletricapi.config.security;
 
-import com.iteletric.iteletricapi.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
