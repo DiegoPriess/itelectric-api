@@ -21,13 +21,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -110,7 +110,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testGetByIdSuccess() {
+    void testGetByIdSuccess() {
         User user = new User();
         when(repository.findById(anyLong())).thenReturn(Optional.of(user));
 
@@ -120,7 +120,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testGetByIdNotFound() {
+    void testGetByIdNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         BusinessException thrown = assertThrows(BusinessException.class, () -> {
@@ -131,7 +131,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testListUsers() {
+    void testListUsers() {
         Pageable pageable = mock(Pageable.class);
         List<User> users = List.of(new User(), new User());
         Page<User> userPage = new PageImpl<>(users);
