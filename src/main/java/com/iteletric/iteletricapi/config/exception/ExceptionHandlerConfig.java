@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.config.exeption;
+package com.iteletric.iteletricapi.config.exception;
 
 import com.iteletric.iteletricapi.dtos.exception.BusinessExceptionResponse;
 import jakarta.persistence.EntityNotFoundException;

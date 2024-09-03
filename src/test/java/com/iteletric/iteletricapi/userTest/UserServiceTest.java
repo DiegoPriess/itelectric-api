@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.userTest;
 
-import com.iteletric.iteletricapi.config.exeption.BusinessException;
+import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.config.security.JwtTokenService;
 import com.iteletric.iteletricapi.config.security.SecurityConfiguration;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;

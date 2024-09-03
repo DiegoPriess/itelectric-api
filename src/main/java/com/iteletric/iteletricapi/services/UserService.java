@@ -1,12 +1,11 @@
 package com.iteletric.iteletricapi.services;
 
-import com.iteletric.iteletricapi.config.exeption.BusinessException;
+import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.config.security.JwtTokenService;
 import com.iteletric.iteletricapi.config.security.SecurityConfiguration;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginResponse;
-import com.iteletric.iteletricapi.dtos.user.UserResponse;
 import com.iteletric.iteletricapi.models.Role;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.models.UserDetailsImpl;
