@@ -24,16 +24,22 @@ import java.util.List;
 public class UserService {
 
 	@Autowired
-	private AuthenticationManager authenticationManager;
+	UserService(AuthenticationManager authenticationManager,
+                JwtTokenService jwtTokenService,
+                UserRepository repository,
+                SecurityConfiguration securityConfiguration) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenService = jwtTokenService;
+        this.repository = repository;
+        this.securityConfiguration = securityConfiguration;
+    }
+	private final AuthenticationManager authenticationManager;
 
-	@Autowired
-	private JwtTokenService jwtTokenService;
+	private final JwtTokenService jwtTokenService;
 
-	@Autowired
-	private UserRepository repository;
+	private final UserRepository repository;
 
-	@Autowired
-	private SecurityConfiguration securityConfiguration;
+	private final SecurityConfiguration securityConfiguration;
 
 	public LoginResponse authenticate(LoginRequest request) {
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
