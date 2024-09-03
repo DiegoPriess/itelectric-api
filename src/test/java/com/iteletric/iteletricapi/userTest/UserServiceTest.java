@@ -45,12 +45,12 @@ public class UserServiceTest {
     private UserService userService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testCreateUserEmailAlreadyExists() {
+    void testCreateUserEmailAlreadyExists() {
         UserRequest request = new UserRequest("John Doe", "john.doe@example.com", "password", RoleName.ROLE_CUSTOMER);
         when(repository.existsByEmail(anyString())).thenReturn(true);
 
@@ -62,7 +62,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdateUserNotFound() {
+    void testUpdateUserNotFound() {
         UserRequest request = new UserRequest("John Doe", "john.doe@example.com", "password", RoleName.ROLE_CUSTOMER);
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -74,7 +74,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testDeleteUserSuccess() {
+    void testDeleteUserSuccess() {
         User user = new User();
         user.setDeleted(0);
         when(repository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -86,7 +86,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testDeleteUserNotFound() {
+    void testDeleteUserNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         BusinessException thrown = assertThrows(BusinessException.class, () -> {
@@ -97,7 +97,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testDeleteUserAlreadyDeleted() {
+    void testDeleteUserAlreadyDeleted() {
         User user = new User();
         user.setDeleted(1);
         when(repository.findById(anyLong())).thenReturn(Optional.of(user));
