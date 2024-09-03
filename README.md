@@ -1,11 +1,11 @@
-# Projeto IT-Eletric API
+# Projeto IT-Elecetric API
 
 ## Sobre o Projeto
-O IT-Eletric é um sistema de gerenciamento desenvolvido especificamente para profissionais autônomos do ramo de elétrica. Este sistema facilita o controle de orçamentos, gerenciamento financeiro e de clientes, através de uma interface web moderna e responsiva. O projeto foi desenvolvido como parte do trabalho de conclusão de curso em Engenharia de Software pelo Centro Universitário - Católica de Santa Catarina.
+O IT-Electric é um sistema de gerenciamento desenvolvido especificamente para profissionais autônomos do ramo de elétrica. Este sistema facilita o controle de orçamentos, gerenciamento financeiro e de clientes, através de uma interface web moderna e responsiva. O projeto foi desenvolvido como parte do trabalho de conclusão de curso em Engenharia de Software pelo Centro Universitário - Católica de Santa Catarina.
 
 Essa é a API do projeto, que também conta com um front-end e uma landing page, disponíveis nos repositórios:
-- [FRONT-END](https://github.com/DiegoPriess/iteletric-app)
-- [LANDING PAGE](https://github.com/DiegoPriess/iteletric-landingpage)
+- [FRONT-END](https://github.com/DiegoPriess/itelectric-app)
+- [LANDING PAGE](https://github.com/DiegoPriess/itelectric-landingpage)
 
 ## [Jira](https://diegopriessdev.atlassian.net/jira/software/projects/KAN/boards/1)
 
@@ -23,7 +23,7 @@ Essa é a API do projeto, que também conta com um front-end e uma landing page,
 
 ## Tecnologias Utilizadas
 - **Linguagem:** Java 21 com Spring Boot e Angular 17
-- **Banco de Dados:** PostgreSQL (db_iteletric)
+- **Banco de Dados:** PostgreSQL (db_itelectric)
 - **Autenticação:** JWT - Bearer Token
 - **Testes:** JUnit
 - **Deploy:** Heroku
