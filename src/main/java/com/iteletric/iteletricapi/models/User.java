@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.models;
 
-import com.iteletric.iteletricapi.config.baseEntities.BaseModel;
+import com.iteletric.iteletricapi.config.base_entities.BaseModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

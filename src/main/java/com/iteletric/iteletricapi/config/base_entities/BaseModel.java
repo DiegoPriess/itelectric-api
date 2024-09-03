@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.config.baseEntities;
+package com.iteletric.iteletricapi.config.base_entities;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
