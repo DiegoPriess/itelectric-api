@@ -1,5 +1,6 @@
 package com.iteletric.iteletricapi.config.security;
 
+import com.iteletric.iteletricapi.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +20,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     @Autowired
-    private UserAuthenticationFilter userAuthenticationFilter;
+    SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
+        this.userAuthenticationFilter = userAuthenticationFilter;
+    }
+
+    private final UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/users/login",

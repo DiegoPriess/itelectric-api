@@ -21,10 +21,13 @@ import java.util.Arrays;
 public class UserAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenService jwtTokenService;
+    UserAuthenticationFilter(JwtTokenService jwtTokenService, UserRepository userRepository) {
+        this.jwtTokenService = jwtTokenService;
+        this.userRepository = userRepository;
+    }
 
-    @Autowired
-    private UserRepository userRepository;
+    private final JwtTokenService jwtTokenService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

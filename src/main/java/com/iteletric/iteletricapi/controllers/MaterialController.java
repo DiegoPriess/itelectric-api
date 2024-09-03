@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class MaterialController {
 
     @Autowired
-    private MaterialService materialService;
+    MaterialController(final MaterialService materialService) {
+        this.materialService = materialService;
+    }
+
+    private final MaterialService materialService;
 
     @PostMapping()
     public ResponseEntity<Void> create(@RequestBody @Valid Material material) {

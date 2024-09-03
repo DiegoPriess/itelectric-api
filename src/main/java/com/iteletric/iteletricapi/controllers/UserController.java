@@ -4,6 +4,7 @@ import com.iteletric.iteletricapi.dtos.user.UserRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.models.User;
+import com.iteletric.iteletricapi.repositories.user.UserRepository;
 import com.iteletric.iteletricapi.services.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody @Valid LoginRequest request) {

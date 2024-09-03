@@ -12,7 +12,11 @@ import org.springframework.stereotype.Service;
 public class MaterialService {
 
     @Autowired
-    private MaterialRepository repository;
+    MaterialService(MaterialRepository repository) {
+        this.repository = repository;
+    }
+
+    private final MaterialRepository repository;
 
     public void create(Material material) {
         repository.save(material);
