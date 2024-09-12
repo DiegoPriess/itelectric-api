@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.controllers;
 
-import com.iteletric.iteletricapi.models.Material;
+import com.iteletric.iteletricapi.models.material.Material;
 import com.iteletric.iteletricapi.services.material.MaterialService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

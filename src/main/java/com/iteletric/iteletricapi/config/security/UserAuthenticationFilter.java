@@ -1,7 +1,7 @@
 package com.iteletric.iteletricapi.config.security;
 
-import com.iteletric.iteletricapi.models.User;
-import com.iteletric.iteletricapi.models.UserDetailsImpl;
+import com.iteletric.iteletricapi.models.user.User;
+import com.iteletric.iteletricapi.models.user.UserDetailsImpl;
 import com.iteletric.iteletricapi.repositories.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.models;
+package com.iteletric.iteletricapi.models.user;
 
 import com.iteletric.iteletricapi.config.base_entities.BaseModel;
 import jakarta.persistence.*;

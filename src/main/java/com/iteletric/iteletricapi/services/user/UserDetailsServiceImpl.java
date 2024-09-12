@@ -1,7 +1,7 @@
 package com.iteletric.iteletricapi.services.user;
 
-import com.iteletric.iteletricapi.models.User;
-import com.iteletric.iteletricapi.models.UserDetailsImpl;
+import com.iteletric.iteletricapi.models.user.User;
+import com.iteletric.iteletricapi.models.user.UserDetailsImpl;
 import com.iteletric.iteletricapi.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

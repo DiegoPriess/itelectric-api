@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.iteletric.iteletricapi.models.UserDetailsImpl;
+import com.iteletric.iteletricapi.models.user.UserDetailsImpl;
 
 @Service
 public class JwtTokenService {

@@ -3,7 +3,7 @@ package com.iteletric.iteletricapi.controllers;
 import com.iteletric.iteletricapi.dtos.user.LoginRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
-import com.iteletric.iteletricapi.models.User;
+import com.iteletric.iteletricapi.models.user.User;
 import com.iteletric.iteletricapi.services.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

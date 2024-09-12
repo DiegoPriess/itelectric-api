@@ -5,7 +5,7 @@ import com.iteletric.iteletricapi.config.security.JwtTokenService;
 import com.iteletric.iteletricapi.config.security.SecurityConfiguration;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
 import com.iteletric.iteletricapi.enums.user.RoleName;
-import com.iteletric.iteletricapi.models.User;
+import com.iteletric.iteletricapi.models.user.User;
 import com.iteletric.iteletricapi.repositories.user.UserRepository;
 import com.iteletric.iteletricapi.services.user.UserService;
 import org.junit.jupiter.api.BeforeEach;

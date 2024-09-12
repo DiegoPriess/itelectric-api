@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.repositories.material;
 
-import com.iteletric.iteletricapi.models.Material;
+import com.iteletric.iteletricapi.models.material.Material;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

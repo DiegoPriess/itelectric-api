@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.models;
+package com.iteletric.iteletricapi.models.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

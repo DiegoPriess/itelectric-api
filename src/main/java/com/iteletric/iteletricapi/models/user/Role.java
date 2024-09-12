@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.models;
+package com.iteletric.iteletricapi.models.user;
 
 import com.iteletric.iteletricapi.enums.user.RoleName;
 import jakarta.persistence.*;

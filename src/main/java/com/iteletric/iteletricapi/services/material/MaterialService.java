@@ -1,7 +1,7 @@
 package com.iteletric.iteletricapi.services.material;
 
 import com.iteletric.iteletricapi.config.exception.BusinessException;
-import com.iteletric.iteletricapi.models.Material;
+import com.iteletric.iteletricapi.models.material.Material;
 import com.iteletric.iteletricapi.repositories.material.MaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

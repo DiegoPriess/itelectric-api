@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.repositories.user;
 
-import com.iteletric.iteletricapi.models.User;
+import com.iteletric.iteletricapi.models.user.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
