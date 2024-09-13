@@ -1,5 +1,6 @@
 package com.iteletric.iteletricapi.controllers;
 
+import com.iteletric.iteletricapi.dtos.work.WorkRequestDTO;
 import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.services.WorkService;
 import jakarta.validation.Valid;
@@ -14,40 +15,40 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/work")
 public class WorkController {
 
-    private final WorkService workService;
+    private final WorkService service;
 
     @Autowired
-    WorkController(final WorkService workService) {
-        this.workService = workService;
+    WorkController(final WorkService service) {
+        this.service = service;
     }
 
-    @PostMapping()
-    public ResponseEntity<Void> create(@RequestBody @Valid Work work) {
-        workService.create(work);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<Work> create(@RequestBody WorkRequestDTO workRequestDTO) {
+        Work createdWork = service.create(workRequestDTO);
+        return new ResponseEntity<>(createdWork, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid Work work) {
-        workService.update(id, work);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Work> update(@PathVariable Long id, @RequestBody @Valid WorkRequestDTO workRequestDTO) {
+        Work updatedWork = service.update(id, workRequestDTO);
+        return new ResponseEntity<>(updatedWork, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        workService.delete(id);
+        service.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Work> getById(@PathVariable Long id) {
-        Work work = workService.getById(id);
+        Work work = service.getById(id);
         return new ResponseEntity<>(work, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<Page<Work>> list(Pageable pageable) {
-        Page<Work> works = workService.list(pageable);
+        Page<Work> works = service.list(pageable);
         return new ResponseEntity<>(works, HttpStatus.OK);
     }
 }

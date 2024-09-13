@@ -30,6 +30,9 @@ public class Work extends BaseModel {
     @Column(name="price", nullable = false)
     private BigDecimal price;
 
-    @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Material> materials;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(name="work_material",
+               joinColumns = @JoinColumn(name = "work_id"),
+               inverseJoinColumns = @JoinColumn(name="material_id"))
+    private List<Material> materialList;
 }

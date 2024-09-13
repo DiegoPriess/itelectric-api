@@ -1,8 +1,11 @@
 package com.iteletric.iteletricapi.services;
 
 import com.iteletric.iteletricapi.config.exception.BusinessException;
+import com.iteletric.iteletricapi.dtos.work.WorkRequestDTO;
 import com.iteletric.iteletricapi.models.Work;
+import com.iteletric.iteletricapi.models.material.Material;
 import com.iteletric.iteletricapi.repositories.WorkRepository;
+import com.iteletric.iteletricapi.repositories.material.MaterialRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,18 +16,20 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class WorkServiceTest {
 
     @Mock
-    private WorkRepository repository;
+    private WorkRepository workRepository;
+
+    @Mock
+    private MaterialRepository materialRepository;
 
     @InjectMocks
     private WorkService workService;
@@ -35,101 +40,132 @@ class WorkServiceTest {
     }
 
     @Test
-    void testCreateWork() {
-        Work work = new Work();
-        work.setName("Test Work");
-        work.setPrice(BigDecimal.valueOf(1000.0));
+    void testCreateWorkSuccess() {
+        WorkRequestDTO workRequestDTO = new WorkRequestDTO();
+        workRequestDTO.setName("New Work");
+        workRequestDTO.setPrice(BigDecimal.valueOf(1000));
+        workRequestDTO.setMaterialIdList(Arrays.asList(1L, 2L));
 
-        workService.create(work);
+        List<Material> materials = Arrays.asList(
+                Material.builder().id(1L).name("Material 1").price(BigDecimal.valueOf(100)).build(),
+                Material.builder().id(2L).name("Material 2").price(BigDecimal.valueOf(200)).build()
+        );
 
-        verify(repository).save(work);
+        when(materialRepository.findAllById(workRequestDTO.getMaterialIdList())).thenReturn(materials);
+        when(workRepository.save(any(Work.class))).thenReturn(Work.builder().id(1L).build());
+
+        Work result = workService.create(workRequestDTO);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        verify(workRepository).save(any(Work.class));
     }
 
     @Test
-    void testUpdateWorkNotFound() {
-        Work workDetails = new Work();
-        workDetails.setName("Updated Work");
-        workDetails.setPrice(BigDecimal.valueOf(1500.0));
+    void testCreateWorkNoMaterialsFound() {
+        WorkRequestDTO workRequestDTO = new WorkRequestDTO();
+        workRequestDTO.setMaterialIdList(Arrays.asList(1L, 2L));
 
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        when(materialRepository.findAllById(workRequestDTO.getMaterialIdList())).thenReturn(Arrays.asList());
 
-        BusinessException thrown = assertThrows(BusinessException.class, () -> {
-            workService.update(1L, workDetails);
-        });
-
-        assertEquals("Trabalho não encontrado", thrown.getMessage());
+        BusinessException exception = assertThrows(BusinessException.class, () -> workService.create(workRequestDTO));
+        assertEquals("Nenhum material encontrado com os IDs fornecidos", exception.getMessage());
     }
 
     @Test
     void testUpdateWorkSuccess() {
-        Work work = new Work();
-        work.setName("Old Work");
-        work.setPrice(BigDecimal.valueOf(1000.0));
+        Long workId = 1L;
+        WorkRequestDTO workRequestDTO = new WorkRequestDTO();
+        workRequestDTO.setName("Updated Work");
+        workRequestDTO.setPrice(BigDecimal.valueOf(1500));
+        workRequestDTO.setMaterialIdList(Arrays.asList(1L, 2L));
 
-        Work workDetails = new Work();
-        workDetails.setName("Updated Work");
-        workDetails.setPrice(BigDecimal.valueOf(1500.0));
+        List<Material> materials = Arrays.asList(
+                Material.builder().id(1L).name("Material 1").price(BigDecimal.valueOf(100)).build(),
+                Material.builder().id(2L).name("Material 2").price(BigDecimal.valueOf(200)).build()
+        );
 
-        when(repository.findById(anyLong())).thenReturn(Optional.of(work));
+        Work existingWork = Work.builder().id(workId).build();
 
-        workService.update(1L, workDetails);
+        when(workRepository.findById(workId)).thenReturn(Optional.of(existingWork));
+        when(materialRepository.findAllById(workRequestDTO.getMaterialIdList())).thenReturn(materials);
+        when(workRepository.save(any(Work.class))).thenReturn(existingWork);
 
-        assertEquals("Updated Work", work.getName());
-        assertEquals(BigDecimal.valueOf(1500.0), work.getPrice());
-        verify(repository).save(work);
+        Work updatedWork = workService.update(workId, workRequestDTO);
+
+        assertNotNull(updatedWork);
+        assertEquals(workId, updatedWork.getId());
+        verify(workRepository).save(existingWork);
     }
 
     @Test
-    void testDeleteWorkNotFound() {
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+    void testUpdateWorkNotFound() {
+        Long workId = 1L;
+        WorkRequestDTO workRequestDTO = new WorkRequestDTO();
+        workRequestDTO.setMaterialIdList(Arrays.asList(1L, 2L));
 
-        BusinessException thrown = assertThrows(BusinessException.class, () -> {
-            workService.delete(1L);
-        });
+        when(workRepository.findById(workId)).thenReturn(Optional.empty());
 
-        assertEquals("Trabalho não encontrado", thrown.getMessage());
+        BusinessException exception = assertThrows(BusinessException.class, () -> workService.update(workId, workRequestDTO));
+        assertEquals("Trabalho não encontrado", exception.getMessage());
     }
 
     @Test
     void testDeleteWorkSuccess() {
-        Work work = new Work();
-        when(repository.findById(anyLong())).thenReturn(Optional.of(work));
+        Long workId = 1L;
+        Work work = Work.builder().id(workId).build();
 
-        workService.delete(1L);
+        when(workRepository.findById(workId)).thenReturn(Optional.of(work));
 
-        verify(repository).delete(work);
+        workService.delete(workId);
+
+        verify(workRepository).delete(work);
+    }
+
+    @Test
+    void testDeleteWorkNotFound() {
+        Long workId = 1L;
+
+        when(workRepository.findById(workId)).thenReturn(Optional.empty());
+
+        BusinessException exception = assertThrows(BusinessException.class, () -> workService.delete(workId));
+        assertEquals("Trabalho não encontrado", exception.getMessage());
     }
 
     @Test
     void testGetByIdSuccess() {
-        Work work = new Work();
-        when(repository.findById(anyLong())).thenReturn(Optional.of(work));
+        Long workId = 1L;
+        Work work = Work.builder().id(workId).build();
 
-        Work result = workService.getById(1L);
+        when(workRepository.findById(workId)).thenReturn(Optional.of(work));
 
-        assertEquals(work, result);
+        Work result = workService.getById(workId);
+
+        assertNotNull(result);
+        assertEquals(workId, result.getId());
     }
 
     @Test
     void testGetByIdNotFound() {
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        Long workId = 1L;
 
-        BusinessException thrown = assertThrows(BusinessException.class, () -> {
-            workService.getById(1L);
-        });
+        when(workRepository.findById(workId)).thenReturn(Optional.empty());
 
-        assertEquals("Trabalho não encontrado", thrown.getMessage());
+        BusinessException exception = assertThrows(BusinessException.class, () -> workService.getById(workId));
+        assertEquals("Trabalho não encontrado", exception.getMessage());
     }
 
     @Test
     void testListWorks() {
         Pageable pageable = mock(Pageable.class);
-        List<Work> works = List.of(new Work(), new Work());
+        List<Work> works = Arrays.asList(Work.builder().id(1L).build(), Work.builder().id(2L).build());
         Page<Work> workPage = new PageImpl<>(works);
-        when(repository.findAll(pageable)).thenReturn(workPage);
+
+        when(workRepository.findAll(pageable)).thenReturn(workPage);
 
         Page<Work> result = workService.list(pageable);
 
-        assertEquals(workPage, result);
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
     }
 }

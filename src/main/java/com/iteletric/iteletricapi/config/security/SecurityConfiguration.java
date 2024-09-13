@@ -36,7 +36,9 @@ public class SecurityConfiguration {
             "/material",
             "/material/**",
             "/work",
-            "/work/**"
+            "/work/**",
+            "/budget",
+            "/budget/**"
     };
 
     public static final String [] ENDPOINTS_CUSTOMER = {

@@ -2,7 +2,6 @@ package com.iteletric.iteletricapi.models.material;
 
 import com.iteletric.iteletricapi.config.base_entities.BaseModel;
 import com.iteletric.iteletricapi.enums.material.UnitOfMeasure;
-import com.iteletric.iteletricapi.models.Work;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,13 +30,10 @@ public class Material extends BaseModel {
     private BigDecimal price;
 
     @Column(name="unit_measure", nullable = false)
+    @Enumerated(EnumType.STRING)
     private UnitOfMeasure unitMeasure;
 
     @Column(name="quantity_unit_measure", nullable = false)
     private BigDecimal quantityUnitMeasure;
-
-    @ManyToOne()
-    @JoinColumn(name = "work_id", referencedColumnName = "id")
-    private Work work;
 
 }

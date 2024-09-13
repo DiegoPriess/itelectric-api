@@ -7,5 +7,6 @@ public enum UnitOfMeasure {
 
     METERS,
     CENTIMETERS,
-    UNIT
+    UNIT,
+    KG
 }
