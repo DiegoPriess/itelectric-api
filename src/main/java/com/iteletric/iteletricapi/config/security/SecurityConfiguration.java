@@ -26,15 +26,17 @@ public class SecurityConfiguration {
     private final UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/users/login",
-            "/users/create"
+            "/user/login",
+            "/user/create"
     };
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
-            "/users",
-            "/users/**",
-            "/materials",
-            "/materials/**"
+            "/user",
+            "/user/**",
+            "/material",
+            "/material/**",
+            "/work",
+            "/work/**"
     };
 
     public static final String [] ENDPOINTS_CUSTOMER = {
