@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.models.material;
+package com.iteletric.iteletricapi.models;
 
 import com.iteletric.iteletricapi.config.base_entities.BaseModel;
 import com.iteletric.iteletricapi.enums.material.UnitOfMeasure;

@@ -2,9 +2,8 @@ package com.iteletric.iteletricapi.services;
 
 import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.enums.material.UnitOfMeasure;
-import com.iteletric.iteletricapi.models.material.Material;
-import com.iteletric.iteletricapi.repositories.material.MaterialRepository;
-import com.iteletric.iteletricapi.services.material.MaterialService;
+import com.iteletric.iteletricapi.models.Material;
+import com.iteletric.iteletricapi.repositories.MaterialRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
