@@ -1,5 +1,6 @@
 package com.iteletric.iteletricapi.models;
 
+import com.iteletric.iteletricapi.config.base_entities.BaseModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "budget")
-public class Budget {
+public class Budget extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
