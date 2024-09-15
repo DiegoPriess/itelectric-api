@@ -1,14 +1,15 @@
 package com.iteletric.iteletricapi.controllers;
 
+import com.iteletric.iteletricapi.config.validation.ValidationGroups;
 import com.iteletric.iteletricapi.dtos.work.WorkRequestDTO;
 import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.services.WorkService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,13 +24,13 @@ public class WorkController {
     }
 
     @PostMapping
-    public ResponseEntity<Work> create(@RequestBody WorkRequestDTO workRequestDTO) {
+    public ResponseEntity<Work> create(@RequestBody @Validated(ValidationGroups.POST.class) WorkRequestDTO workRequestDTO) {
         Work createdWork = service.create(workRequestDTO);
         return new ResponseEntity<>(createdWork, HttpStatus.CREATED);
     }
 
     @PutMapping("/{workId}")
-    public ResponseEntity<Work> update(@PathVariable Long workId, @RequestBody @Valid WorkRequestDTO workRequestDTO) {
+    public ResponseEntity<Work> update(@PathVariable Long workId, @RequestBody @Validated(ValidationGroups.PUT.class) WorkRequestDTO workRequestDTO) {
         Work updatedWork = service.update(workId, workRequestDTO);
         return new ResponseEntity<>(updatedWork, HttpStatus.OK);
     }

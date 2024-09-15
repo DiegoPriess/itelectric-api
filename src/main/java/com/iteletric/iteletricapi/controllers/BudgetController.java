@@ -1,14 +1,15 @@
 package com.iteletric.iteletricapi.controllers;
 
+import com.iteletric.iteletricapi.config.validation.ValidationGroups;
 import com.iteletric.iteletricapi.dtos.budget.BudgetRequestDTO;
 import com.iteletric.iteletricapi.models.Budget;
 import com.iteletric.iteletricapi.services.BudgetService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,13 +24,13 @@ public class BudgetController {
     }
 
     @PostMapping
-    public ResponseEntity<Budget> create(@RequestBody @Valid BudgetRequestDTO budgetRequestDTO) {
+    public ResponseEntity<Budget> create(@RequestBody @Validated(ValidationGroups.POST.class) BudgetRequestDTO budgetRequestDTO) {
         Budget createdBudget = budgetService.create(budgetRequestDTO);
         return new ResponseEntity<>(createdBudget, HttpStatus.CREATED);
     }
 
     @PutMapping("/{budgetId}")
-    public ResponseEntity<Budget> update(@PathVariable Long budgetId, @RequestBody @Valid BudgetRequestDTO budgetRequestDTO) {
+    public ResponseEntity<Budget> update(@PathVariable Long budgetId, @RequestBody @Validated(ValidationGroups.PUT.class) BudgetRequestDTO budgetRequestDTO) {
         Budget updatedBudget = budgetService.update(budgetId, budgetRequestDTO);
         return new ResponseEntity<>(updatedBudget, HttpStatus.OK);
     }

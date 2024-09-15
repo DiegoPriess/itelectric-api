@@ -19,7 +19,6 @@ public class UserRequest {
     @OptionalNotBlank(groups = ValidationGroups.PUT.class, message = "O nome não pode ser vazio!")
     private String name;
 
-
     @NotBlank(groups = ValidationGroups.POST.class, message = "O email deve ser informado!")
     @OptionalNotBlank(groups = ValidationGroups.PUT.class, message = "O email não pode ser vazio!")
     @Email(message = "O email informado é inválido!")
