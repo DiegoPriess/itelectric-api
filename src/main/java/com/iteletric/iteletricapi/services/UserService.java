@@ -46,7 +46,7 @@ public class UserService {
 
 	public LoginResponse authenticate(LoginRequest request) {
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-				new UsernamePasswordAuthenticationToken(request.email(), request.password());
+				new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
 
 		Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
@@ -56,13 +56,13 @@ public class UserService {
 	}
 
 	public void create(UserRequest request) {
-		if (repository.existsByEmail(request.email())) throw new BusinessException("O e-mail informado já está em uso");
+		if (repository.existsByEmail(request.getEmail())) throw new BusinessException("O e-mail informado já está em uso");
 
 		User newUser = User.builder()
-						   .name(request.name())
-						   .email(request.email())
-						   .password(securityConfiguration.passwordEncoder().encode(request.password()))
-						   .roles(List.of(Role.builder().name(request.role()).build()))
+						   .name(request.getName())
+						   .email(request.getEmail())
+						   .password(securityConfiguration.passwordEncoder().encode(request.getPassword()))
+						   .roles(List.of(Role.builder().name(request.getRole()).build()))
 						   .deleted(0)
 						   .build();
 
@@ -73,9 +73,9 @@ public class UserService {
 		User user = repository.findById(userId)
 						      .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
 
-		user.setName(request.name());
-		user.setEmail(request.email());
-		user.setPassword(securityConfiguration.passwordEncoder().encode(request.password()));
+		if (request.getName() != null) user.setName(request.getName());
+		if (request.getEmail() != null) user.setEmail(request.getEmail());
+		if (request.getPassword() != null) user.setPassword(securityConfiguration.passwordEncoder().encode(request.getPassword()));
 
 		repository.save(user);
 	}

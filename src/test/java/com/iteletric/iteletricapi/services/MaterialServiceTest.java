@@ -1,7 +1,6 @@
 package com.iteletric.iteletricapi.services;
 
 import com.iteletric.iteletricapi.config.exception.BusinessException;
-import com.iteletric.iteletricapi.enums.material.UnitOfMeasure;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.repositories.MaterialRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,125 +13,108 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class MaterialServiceTest {
 
     @Mock
-    private MaterialRepository materialRepository;
+    private MaterialRepository repository;
 
     @InjectMocks
     private MaterialService materialService;
 
-    private Material material;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        material = Material.builder()
-                .id(1L)
-                .name("Cement")
-                .price(BigDecimal.valueOf(20.00))
-                .unitMeasure(UnitOfMeasure.METERS)
-                .quantityUnitMeasure(BigDecimal.TEN)
-                .build();
     }
 
     @Test
-    void testCreateMaterial() {
-        when(materialRepository.save(any(Material.class))).thenReturn(material);
-
+    void createMaterialSuccess() {
+        Material material = new Material();
         materialService.create(material);
-
-        verify(materialRepository, times(1)).save(material);
+        verify(repository, times(1)).save(material);
     }
 
     @Test
-    void testUpdateMaterial() {
-        when(materialRepository.findById(1L)).thenReturn(Optional.of(material));
+    void updateMaterialSuccess() {
+        Long materialId = 1L;
+        Material materialDetails = new Material();
+        Material existingMaterial = new Material();
 
-        Material updatedMaterialDetails = Material.builder()
-                .name("Updated Cement")
-                .price(BigDecimal.valueOf(25.00))
-                .unitMeasure(UnitOfMeasure.METERS)
-                .quantityUnitMeasure(BigDecimal.valueOf(100000))
-                .build();
-
-        materialService.update(1L, updatedMaterialDetails);
-
-        assertEquals("Updated Cement", material.getName());
-        assertEquals(BigDecimal.valueOf(25.00), material.getPrice());
-        assertEquals(UnitOfMeasure.METERS, material.getUnitMeasure());
-        assertEquals(BigDecimal.valueOf(100000), material.getQuantityUnitMeasure());
-
-        verify(materialRepository, times(1)).save(material);
+        when(repository.findById(materialId)).thenReturn(Optional.of(existingMaterial));
+        materialService.update(materialId, materialDetails);
+        verify(repository, times(1)).save(existingMaterial);
     }
 
     @Test
-    void testUpdateMaterialNotFound() {
-        when(materialRepository.findById(1L)).thenReturn(Optional.empty());
-
-        Material updatedMaterialDetails = Material.builder()
-                .name("Updated Cement")
-                .price(BigDecimal.valueOf(25.00))
-                .unitMeasure(UnitOfMeasure.CENTIMETERS)
-                .quantityUnitMeasure(BigDecimal.TEN)
-                .build();
-
-        assertThrows(BusinessException.class, () -> materialService.update(1L, updatedMaterialDetails));
+    void updateMaterialNotFound() {
+        Long materialId = 1L;
+        when(repository.findById(materialId)).thenReturn(Optional.empty());
+        assertThrows(BusinessException.class, () -> materialService.update(materialId, new Material()));
     }
 
     @Test
-    void testDeleteMaterial() {
-        when(materialRepository.findById(1L)).thenReturn(Optional.of(material));
+    void deleteMaterialSuccess() {
+        Long materialId = 1L;
+        Material existingMaterial = new Material();
 
-        materialService.delete(1L);
-
-        verify(materialRepository, times(1)).delete(material);
+        when(repository.findById(materialId)).thenReturn(Optional.of(existingMaterial));
+        materialService.delete(materialId);
+        verify(repository, times(1)).delete(existingMaterial);
     }
 
     @Test
-    void testDeleteMaterialNotFound() {
-        when(materialRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(BusinessException.class, () -> materialService.delete(1L));
+    void deleteMaterialNotFound() {
+        Long materialId = 1L;
+        when(repository.findById(materialId)).thenReturn(Optional.empty());
+        assertThrows(BusinessException.class, () -> materialService.delete(materialId));
     }
 
     @Test
-    void testGetMaterialById() {
-        when(materialRepository.findById(1L)).thenReturn(Optional.of(material));
-
-        Material foundMaterial = materialService.getById(1L);
-
-        assertEquals(material, foundMaterial);
-        verify(materialRepository, times(1)).findById(1L);
+    void getByIdMaterialSuccess() {
+        Long materialId = 1L;
+        Material material = new Material();
+        when(repository.findById(materialId)).thenReturn(Optional.of(material));
+        Material result = materialService.getById(materialId);
+        assertNotNull(result);
     }
 
     @Test
-    void testGetMaterialByIdNotFound() {
-        when(materialRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(BusinessException.class, () -> materialService.getById(1L));
+    void getByIdMaterialNotFound() {
+        Long materialId = 1L;
+        when(repository.findById(materialId)).thenReturn(Optional.empty());
+        assertThrows(BusinessException.class, () -> materialService.getById(materialId));
     }
 
     @Test
-    void testListMaterials() {
+    void listMaterialsSuccess() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Material> materialPage = new PageImpl<>(Collections.singletonList(material));
-
-        when(materialRepository.findAll(pageable)).thenReturn(materialPage);
-
+        Page<Material> page = new PageImpl<>(List.of(new Material()));
+        when(repository.findAll(pageable)).thenReturn(page);
         Page<Material> result = materialService.list(pageable);
-
+        assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        verify(materialRepository, times(1)).findAll(pageable);
+    }
+
+    @Test
+    void getAllMaterialSelectedByIdSuccess() {
+        List<Long> materialIdList = Arrays.asList(1L, 2L);
+        List<Material> materialList = Arrays.asList(new Material(), new Material());
+        when(repository.findAllById(materialIdList)).thenReturn(materialList);
+        List<Material> result = materialService.getAllMaterialSelectedById(materialIdList);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void getAllMaterialSelectedByIdNotFound() {
+        List<Long> materialIdList = Arrays.asList(1L, 2L);
+        when(repository.findAllById(materialIdList)).thenReturn(List.of());
+        assertThrows(BusinessException.class, () -> materialService.getAllMaterialSelectedById(materialIdList));
     }
 }

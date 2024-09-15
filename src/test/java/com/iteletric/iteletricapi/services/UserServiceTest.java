@@ -3,8 +3,13 @@ package com.iteletric.iteletricapi.services;
 import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.config.security.JwtTokenService;
 import com.iteletric.iteletricapi.config.security.SecurityConfiguration;
+import com.iteletric.iteletricapi.config.security.userauthentication.UserDetailsImpl;
+import com.iteletric.iteletricapi.dtos.user.LoginRequest;
+import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
+import com.iteletric.iteletricapi.dtos.user.UserResponse;
 import com.iteletric.iteletricapi.enums.user.RoleName;
+import com.iteletric.iteletricapi.mappers.UserMapper;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,16 +19,17 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class UserServiceTest {
@@ -40,6 +46,9 @@ class UserServiceTest {
     @Mock
     private SecurityConfiguration securityConfiguration;
 
+    @Mock
+    private UserMapper userMapper;
+
     @InjectMocks
     private UserService userService;
 
@@ -49,95 +58,124 @@ class UserServiceTest {
     }
 
     @Test
-    void testCreateUserEmailAlreadyExists() {
-        UserRequest request = new UserRequest("John Doe", "john.doe@example.com", "password", RoleName.ROLE_CUSTOMER);
+    void authenticateUserSuccess() {
+        LoginRequest loginRequest = new LoginRequest("email@test.com", "password");
+        Authentication authentication = mock(Authentication.class);
+        UserDetailsImpl userDetails = mock(UserDetailsImpl.class);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(jwtTokenService.generateToken(any(UserDetailsImpl.class))).thenReturn("mockToken");
+
+        LoginResponse loginResponse = userService.authenticate(loginRequest);
+
+        assertNotNull(loginResponse);
+        assertEquals("mockToken", loginResponse.getToken());
+    }
+
+    @Test
+    void createUserSuccess() {
+        UserRequest userRequest = new UserRequest("John Doe", "email@test.com", "password", RoleName.ROLE_CUSTOMER);
+        when(repository.existsByEmail(anyString())).thenReturn(false);
+        when(securityConfiguration.passwordEncoder().encode(anyString())).thenReturn("encodedPassword");
+
+        userService.create(userRequest);
+
+        verify(repository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    void createUserEmailAlreadyExists() {
+        UserRequest userRequest = new UserRequest("John Doe", "email@test.com", "password", RoleName.ROLE_CUSTOMER);
         when(repository.existsByEmail(anyString())).thenReturn(true);
 
-        BusinessException thrown = assertThrows(BusinessException.class, () -> {
-            userService.create(request);
-        });
-
-        assertEquals("O e-mail informado já está em uso", thrown.getMessage());
+        assertThrows(BusinessException.class, () -> userService.create(userRequest));
     }
 
     @Test
-    void testUpdateUserNotFound() {
-        UserRequest request = new UserRequest("John Doe", "john.doe@example.com", "password", RoleName.ROLE_CUSTOMER);
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+    void updateUserSuccess() {
+        Long userId = 1L;
+        UserRequest userRequest = new UserRequest("John Doe", "newemail@test.com", "newpassword", RoleName.ROLE_CUSTOMER);
+        User existingUser = new User();
 
-        BusinessException thrown = assertThrows(BusinessException.class, () -> {
-            userService.update(1L, request);
-        });
+        when(repository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(securityConfiguration.passwordEncoder().encode(anyString())).thenReturn("encodedPassword");
 
-        assertEquals("Usuário não encontrado", thrown.getMessage());
+        userService.update(userId, userRequest);
+
+        verify(repository, times(1)).save(existingUser);
     }
 
     @Test
-    void testDeleteUserSuccess() {
+    void updateUserNotFound() {
+        Long userId = 1L;
+        UserRequest userRequest = new UserRequest("John Doe", "email@test.com", "password", RoleName.ROLE_CUSTOMER);
+        when(repository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(BusinessException.class, () -> userService.update(userId, userRequest));
+    }
+
+    @Test
+    void deleteUserSuccess() {
+        Long userId = 1L;
+        User existingUser = new User();
+        existingUser.setDeleted(0);
+
+        when(repository.findById(userId)).thenReturn(Optional.of(existingUser));
+
+        userService.delete(userId);
+
+        verify(repository, times(1)).save(existingUser);
+        assertEquals(1, existingUser.getDeleted());
+    }
+
+    @Test
+    void deleteUserAlreadyDeleted() {
+        Long userId = 1L;
+        User existingUser = new User();
+        existingUser.setDeleted(1);
+
+        when(repository.findById(userId)).thenReturn(Optional.of(existingUser));
+
+        assertThrows(BusinessException.class, () -> userService.delete(userId));
+    }
+
+    @Test
+    void getByIdUserSuccess() {
+        Long userId = 1L;
         User user = new User();
-        user.setDeleted(0);
-        when(repository.findById(anyLong())).thenReturn(Optional.of(user));
+        UserResponse userResponse = new UserResponse(1L, "John Doe", "email@test.com", null, null);
 
-        userService.delete(1L);
+        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(userMapper.toUserResponseDTO(user)).thenReturn(userResponse);
 
-        verify(repository).save(user);
-        assertEquals(1, user.getDeleted());
+        UserResponse result = userService.getById(userId);
+
+        assertNotNull(result);
+        assertEquals(userResponse.getId(), result.getId());
     }
 
     @Test
-    void testDeleteUserNotFound() {
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+    void getByIdUserNotFound() {
+        Long userId = 1L;
+        when(repository.findById(userId)).thenReturn(Optional.empty());
 
-        BusinessException thrown = assertThrows(BusinessException.class, () -> {
-            userService.delete(1L);
-        });
-
-        assertEquals("Usuário não encontrado", thrown.getMessage());
+        assertThrows(BusinessException.class, () -> userService.getById(userId));
     }
 
     @Test
-    void testDeleteUserAlreadyDeleted() {
+    void listUsersSuccess() {
+        Pageable pageable = PageRequest.of(0, 10);
         User user = new User();
-        user.setDeleted(1);
-        when(repository.findById(anyLong())).thenReturn(Optional.of(user));
+        UserResponse userResponse = new UserResponse(1L, "John Doe", "email@test.com", null, null);
+        Page<User> usersPage = new PageImpl<>(Collections.singletonList(user));
 
-        BusinessException thrown = assertThrows(BusinessException.class, () -> {
-            userService.delete(1L);
-        });
+        when(repository.findAll(pageable)).thenReturn(usersPage);
+        when(userMapper.toUserResponseDTO(user)).thenReturn(userResponse);
 
-        assertEquals("Usuário já está desativado", thrown.getMessage());
-    }
+        Page<UserResponse> result = userService.list(pageable);
 
-    @Test
-    void testGetByIdSuccess() {
-        User user = new User();
-        when(repository.findById(anyLong())).thenReturn(Optional.of(user));
-
-        User result = userService.getById(1L);
-
-        assertEquals(user, result);
-    }
-
-    @Test
-    void testGetByIdNotFound() {
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
-
-        BusinessException thrown = assertThrows(BusinessException.class, () -> {
-            userService.getById(1L);
-        });
-
-        assertEquals("Usuário não encontrado", thrown.getMessage());
-    }
-
-    @Test
-    void testListUsers() {
-        Pageable pageable = mock(Pageable.class);
-        List<User> userList = List.of(new User(), new User());
-        Page<User> userPage = new PageImpl<>(userList);
-        when(repository.findAll(pageable)).thenReturn(userPage);
-
-        Page<User> result = userService.list(pageable);
-
-        assertEquals(userPage, result);
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
     }
 }

@@ -1,5 +1,6 @@
 package com.iteletric.iteletricapi.controllers;
 
+import com.iteletric.iteletricapi.config.validation.ValidationGroups;
 import com.iteletric.iteletricapi.dtos.user.LoginRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,13 +33,13 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Void> create(@RequestBody @Valid UserRequest request) {
+    public ResponseEntity<Void> create(@RequestBody @Validated(ValidationGroups.POST.class) UserRequest request) {
         userService.create(request);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<Void> update(@PathVariable Long userId, @RequestBody @Valid UserRequest request) {
+    public ResponseEntity<Void> update(@PathVariable Long userId, @RequestBody @Validated(ValidationGroups.PUT.class) UserRequest request) {
         userService.update(userId, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
