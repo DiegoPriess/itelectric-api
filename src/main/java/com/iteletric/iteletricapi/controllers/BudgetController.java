@@ -28,27 +28,27 @@ public class BudgetController {
         return new ResponseEntity<>(createdBudget, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Budget> update(@PathVariable Long id, @RequestBody @Valid BudgetRequestDTO budgetRequestDTO) {
-        Budget updatedBudget = budgetService.update(id, budgetRequestDTO);
+    @PutMapping("/{budgetId}")
+    public ResponseEntity<Budget> update(@PathVariable Long budgetId, @RequestBody @Valid BudgetRequestDTO budgetRequestDTO) {
+        Budget updatedBudget = budgetService.update(budgetId, budgetRequestDTO);
         return new ResponseEntity<>(updatedBudget, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        budgetService.delete(id);
+    @DeleteMapping("/{budgetId}")
+    public ResponseEntity<Void> delete(@PathVariable Long budgetId) {
+        budgetService.delete(budgetId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Budget> getById(@PathVariable Long id) {
-        Budget budget = budgetService.getById(id);
+    @GetMapping("/{budgetId}")
+    public ResponseEntity<Budget> getById(@PathVariable Long budgetId) {
+        Budget budget = budgetService.getById(budgetId);
         return new ResponseEntity<>(budget, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<Page<Budget>> list(Pageable pageable) {
-        Page<Budget> budgets = budgetService.list(pageable);
-        return new ResponseEntity<>(budgets, HttpStatus.OK);
+        Page<Budget> budgetList = budgetService.list(pageable);
+        return new ResponseEntity<>(budgetList, HttpStatus.OK);
     }
 }

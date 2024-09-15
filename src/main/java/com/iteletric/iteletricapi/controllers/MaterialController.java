@@ -27,27 +27,27 @@ public class MaterialController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid Material material) {
-        materialService.update(id, material);
+    @PutMapping("/{materialId}")
+    public ResponseEntity<Void> update(@PathVariable Long materialId, @RequestBody @Valid Material material) {
+        materialService.update(materialId, material);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        materialService.delete(id);
+    @DeleteMapping("/{materialId}")
+    public ResponseEntity<Void> delete(@PathVariable Long materialId) {
+        materialService.delete(materialId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Material> getById(@PathVariable Long id) {
-        Material material = materialService.getById(id);
+    @GetMapping("/{materialId}")
+    public ResponseEntity<Material> getById(@PathVariable Long materialId) {
+        Material material = materialService.getById(materialId);
         return new ResponseEntity<>(material, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<Page<Material>> list(Pageable pageable) {
-        Page<Material> materials = materialService.list(pageable);
-        return new ResponseEntity<>(materials, HttpStatus.OK);
+        Page<Material> materialList = materialService.list(pageable);
+        return new ResponseEntity<>(materialList, HttpStatus.OK);
     }
 }

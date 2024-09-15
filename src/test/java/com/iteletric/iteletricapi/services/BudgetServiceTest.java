@@ -46,12 +46,12 @@ class BudgetServiceTest {
         budgetRequestDTO.setWorkIdList(Arrays.asList(1L, 2L));
         budgetRequestDTO.setDeliveryForecast(LocalDate.of(2024, 12, 31));
 
-        List<Work> works = Arrays.asList(
+        List<Work> workList = Arrays.asList(
                 Work.builder().id(1L).price(BigDecimal.valueOf(500)).build(),
                 Work.builder().id(2L).price(BigDecimal.valueOf(600)).build()
         );
 
-        when(workRepository.findAllById(budgetRequestDTO.getWorkIdList())).thenReturn(works);
+        when(workRepository.findAllById(budgetRequestDTO.getWorkIdList())).thenReturn(workList);
         when(budgetRepository.save(any(Budget.class))).thenReturn(Budget.builder().id(1L).build());
 
         Budget result = budgetService.create(budgetRequestDTO);
@@ -79,7 +79,7 @@ class BudgetServiceTest {
         budgetRequestDTO.setWorkIdList(Arrays.asList(1L, 2L));
         budgetRequestDTO.setDeliveryForecast(LocalDate.of(2024, 12, 31));
 
-        List<Work> works = Arrays.asList(
+        List<Work> workList = Arrays.asList(
                 Work.builder().id(1L).price(BigDecimal.valueOf(500)).build(),
                 Work.builder().id(2L).price(BigDecimal.valueOf(600)).build()
         );
@@ -87,7 +87,7 @@ class BudgetServiceTest {
         Budget existingBudget = Budget.builder().id(budgetId).build();
 
         when(budgetRepository.findById(budgetId)).thenReturn(Optional.of(existingBudget));
-        when(workRepository.findAllById(budgetRequestDTO.getWorkIdList())).thenReturn(works);
+        when(workRepository.findAllById(budgetRequestDTO.getWorkIdList())).thenReturn(workList);
         when(budgetRepository.save(any(Budget.class))).thenReturn(existingBudget);
 
         Budget updatedBudget = budgetService.update(budgetId, budgetRequestDTO);
@@ -157,8 +157,8 @@ class BudgetServiceTest {
     @Test
     void testListBudgets() {
         Pageable pageable = mock(Pageable.class);
-        List<Budget> budgets = Arrays.asList(Budget.builder().id(1L).build(), Budget.builder().id(2L).build());
-        Page<Budget> budgetPage = new PageImpl<>(budgets);
+        List<Budget> budgetList = Arrays.asList(Budget.builder().id(1L).build(), Budget.builder().id(2L).build());
+        Page<Budget> budgetPage = new PageImpl<>(budgetList);
 
         when(budgetRepository.findAll(pageable)).thenReturn(budgetPage);
 

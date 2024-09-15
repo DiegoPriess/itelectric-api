@@ -5,9 +5,8 @@ import com.iteletric.iteletricapi.config.security.JwtTokenService;
 import com.iteletric.iteletricapi.config.security.SecurityConfiguration;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
 import com.iteletric.iteletricapi.enums.user.RoleName;
-import com.iteletric.iteletricapi.models.user.User;
-import com.iteletric.iteletricapi.repositories.user.UserRepository;
-import com.iteletric.iteletricapi.services.user.UserService;
+import com.iteletric.iteletricapi.models.User;
+import com.iteletric.iteletricapi.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -133,8 +132,8 @@ class UserServiceTest {
     @Test
     void testListUsers() {
         Pageable pageable = mock(Pageable.class);
-        List<User> users = List.of(new User(), new User());
-        Page<User> userPage = new PageImpl<>(users);
+        List<User> userList = List.of(new User(), new User());
+        Page<User> userPage = new PageImpl<>(userList);
         when(repository.findAll(pageable)).thenReturn(userPage);
 
         Page<User> result = userService.list(pageable);

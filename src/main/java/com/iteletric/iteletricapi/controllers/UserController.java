@@ -3,8 +3,8 @@ package com.iteletric.iteletricapi.controllers;
 import com.iteletric.iteletricapi.dtos.user.LoginRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
-import com.iteletric.iteletricapi.models.user.User;
-import com.iteletric.iteletricapi.services.user.UserService;
+import com.iteletric.iteletricapi.dtos.user.UserResponse;
+import com.iteletric.iteletricapi.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,27 +36,27 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid UserRequest request) {
-        userService.update(id, request);
+    @PutMapping("/{userId}")
+    public ResponseEntity<Void> update(@PathVariable Long userId, @RequestBody @Valid UserRequest request) {
+        userService.update(userId, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        userService.delete(id);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> delete(@PathVariable Long userId) {
+        userService.delete(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id) {
-        User user = userService.getById(id);
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getById(@PathVariable Long userId) {
+        UserResponse user = userService.getById(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<User>> list(Pageable pageable) {
-        Page<User> users = userService.list(pageable);
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public ResponseEntity<Page<UserResponse>> list(Pageable pageable) {
+        Page<UserResponse> userList = userService.list(pageable);
+        return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 }

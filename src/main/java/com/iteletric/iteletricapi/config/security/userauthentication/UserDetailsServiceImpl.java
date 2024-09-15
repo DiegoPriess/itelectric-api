@@ -1,8 +1,7 @@
-package com.iteletric.iteletricapi.services.user;
+package com.iteletric.iteletricapi.config.security.userauthentication;
 
-import com.iteletric.iteletricapi.models.user.User;
-import com.iteletric.iteletricapi.models.user.UserDetailsImpl;
-import com.iteletric.iteletricapi.repositories.user.UserRepository;
+import com.iteletric.iteletricapi.models.User;
+import com.iteletric.iteletricapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,8 +19,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                                  .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
         return new UserDetailsImpl(user);
     }
 

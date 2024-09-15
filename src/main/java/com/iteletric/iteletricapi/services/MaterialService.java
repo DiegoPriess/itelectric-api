@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MaterialService {
 
@@ -22,8 +24,8 @@ public class MaterialService {
         repository.save(material);
     }
 
-    public void update(Long id, Material materialDetails) {
-        Material material = repository.findById(id)
+    public void update(Long materialId, Material materialDetails) {
+        Material material = repository.findById(materialId)
                                       .orElseThrow(() -> new BusinessException("Material não encontrado"));
 
         material.setName(materialDetails.getName());
@@ -34,19 +36,25 @@ public class MaterialService {
         repository.save(material);
     }
 
-    public void delete(Long id) {
-        Material material = repository.findById(id)
+    public void delete(Long materialId) {
+        Material material = repository.findById(materialId)
                                       .orElseThrow(() -> new BusinessException("Material não encontrado"));
 
         repository.delete(material);
     }
 
-    public Material getById(Long id) {
-        return repository.findById(id)
+    public Material getById(Long materialId) {
+        return repository.findById(materialId)
                          .orElseThrow(() -> new BusinessException("Material não encontrado"));
     }
 
     public Page<Material> list(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    public List<Material> getAllMaterialSelectedById(List<Long> workIdList) {
+        List<Material> materialList = repository.findAllById(workIdList);
+        if (materialList.isEmpty()) throw new BusinessException("Os materiais selecionados não foram encontrados");
+        return materialList;
     }
 }

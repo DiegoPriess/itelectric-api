@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.models;
 
-import com.iteletric.iteletricapi.config.base_entities.BaseModel;
+import com.iteletric.iteletricapi.config.baseentities.BaseModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,15 +24,19 @@ public class Budget extends BaseModel {
     private Long id;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(name="budget_work",
+    @JoinTable(name = "budget_work",
             joinColumns = @JoinColumn(name = "budget_id"),
-            inverseJoinColumns = @JoinColumn(name="work_id"))
+            inverseJoinColumns = @JoinColumn(name = "work_id"))
     private List<Work> workList;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private User customer;
 
     @Column(name = "delivery_forecast", nullable = false)
     private LocalDate deliveryForecast;
 
-    @Transient
+    @Column(name = "total_value", nullable = false)
     private BigDecimal totalValue;
 
     public BigDecimal calculateTotalValue() {
@@ -49,10 +53,9 @@ public class Budget extends BaseModel {
         return total;
     }
 
-    @PostLoad
-    @PostPersist
-    @PostUpdate
-    public void updateTotalValue() {
+    @PrePersist
+    @PreUpdate
+    public void preSave() {
         this.totalValue = calculateTotalValue();
     }
 }

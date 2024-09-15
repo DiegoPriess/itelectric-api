@@ -1,5 +1,6 @@
-package com.iteletric.iteletricapi.models.user;
+package com.iteletric.iteletricapi.config.security.userauthentication;
 
+import com.iteletric.iteletricapi.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,10 @@ public class UserDetailsImpl implements UserDetails {
                    .stream()
                    .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                    .collect(Collectors.toList());
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 
     @Override

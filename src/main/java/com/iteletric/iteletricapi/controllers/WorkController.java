@@ -28,27 +28,27 @@ public class WorkController {
         return new ResponseEntity<>(createdWork, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Work> update(@PathVariable Long id, @RequestBody @Valid WorkRequestDTO workRequestDTO) {
-        Work updatedWork = service.update(id, workRequestDTO);
+    @PutMapping("/{workId}")
+    public ResponseEntity<Work> update(@PathVariable Long workId, @RequestBody @Valid WorkRequestDTO workRequestDTO) {
+        Work updatedWork = service.update(workId, workRequestDTO);
         return new ResponseEntity<>(updatedWork, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
+    @DeleteMapping("/{workId}")
+    public ResponseEntity<Void> delete(@PathVariable Long workId) {
+        service.delete(workId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Work> getById(@PathVariable Long id) {
-        Work work = service.getById(id);
+    @GetMapping("/{workId}")
+    public ResponseEntity<Work> getById(@PathVariable Long workId) {
+        Work work = service.getById(workId);
         return new ResponseEntity<>(work, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<Page<Work>> list(Pageable pageable) {
-        Page<Work> works = service.list(pageable);
-        return new ResponseEntity<>(works, HttpStatus.OK);
+        Page<Work> workList = service.list(pageable);
+        return new ResponseEntity<>(workList, HttpStatus.OK);
     }
 }

@@ -46,12 +46,12 @@ class WorkServiceTest {
         workRequestDTO.setPrice(BigDecimal.valueOf(1000));
         workRequestDTO.setMaterialIdList(Arrays.asList(1L, 2L));
 
-        List<Material> materials = Arrays.asList(
+        List<Material> materialList = Arrays.asList(
                 Material.builder().id(1L).name("Material 1").price(BigDecimal.valueOf(100)).build(),
                 Material.builder().id(2L).name("Material 2").price(BigDecimal.valueOf(200)).build()
         );
 
-        when(materialRepository.findAllById(workRequestDTO.getMaterialIdList())).thenReturn(materials);
+        when(materialRepository.findAllById(workRequestDTO.getMaterialIdList())).thenReturn(materialList);
         when(workRepository.save(any(Work.class))).thenReturn(Work.builder().id(1L).build());
 
         Work result = workService.create(workRequestDTO);
@@ -80,7 +80,7 @@ class WorkServiceTest {
         workRequestDTO.setPrice(BigDecimal.valueOf(1500));
         workRequestDTO.setMaterialIdList(Arrays.asList(1L, 2L));
 
-        List<Material> materials = Arrays.asList(
+        List<Material> materialList = Arrays.asList(
                 Material.builder().id(1L).name("Material 1").price(BigDecimal.valueOf(100)).build(),
                 Material.builder().id(2L).name("Material 2").price(BigDecimal.valueOf(200)).build()
         );
@@ -88,7 +88,7 @@ class WorkServiceTest {
         Work existingWork = Work.builder().id(workId).build();
 
         when(workRepository.findById(workId)).thenReturn(Optional.of(existingWork));
-        when(materialRepository.findAllById(workRequestDTO.getMaterialIdList())).thenReturn(materials);
+        when(materialRepository.findAllById(workRequestDTO.getMaterialIdList())).thenReturn(materialList);
         when(workRepository.save(any(Work.class))).thenReturn(existingWork);
 
         Work updatedWork = workService.update(workId, workRequestDTO);
@@ -129,7 +129,7 @@ class WorkServiceTest {
         when(workRepository.findById(workId)).thenReturn(Optional.empty());
 
         BusinessException exception = assertThrows(BusinessException.class, () -> workService.delete(workId));
-        assertEquals("Trabalho não encontrado", exception.getMessage());
+        assertEquals("Serviço não encontrado", exception.getMessage());
     }
 
     @Test
@@ -152,14 +152,14 @@ class WorkServiceTest {
         when(workRepository.findById(workId)).thenReturn(Optional.empty());
 
         BusinessException exception = assertThrows(BusinessException.class, () -> workService.getById(workId));
-        assertEquals("Trabalho não encontrado", exception.getMessage());
+        assertEquals("Serviço não encontrado", exception.getMessage());
     }
 
     @Test
     void testListWorks() {
         Pageable pageable = mock(Pageable.class);
-        List<Work> works = Arrays.asList(Work.builder().id(1L).build(), Work.builder().id(2L).build());
-        Page<Work> workPage = new PageImpl<>(works);
+        List<Work> workList = Arrays.asList(Work.builder().id(1L).build(), Work.builder().id(2L).build());
+        Page<Work> workPage = new PageImpl<>(workList);
 
         when(workRepository.findAll(pageable)).thenReturn(workPage);
 

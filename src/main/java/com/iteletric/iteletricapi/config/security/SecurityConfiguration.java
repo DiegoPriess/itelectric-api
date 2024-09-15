@@ -1,5 +1,6 @@
 package com.iteletric.iteletricapi.config.security;
 
+import com.iteletric.iteletricapi.config.security.userauthentication.UserAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,7 +56,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
-                        .requestMatchers(ENDPOINTS_ELECTRICIAN).hasRole("ELECTRICIAN")
+                        .requestMatchers(ENDPOINTS_ELECTRICIAN).hasRole("OWNER")
                         .requestMatchers(ENDPOINTS_CUSTOMER).hasRole("CUSTOMER")
                         .anyRequest().denyAll()
                 )

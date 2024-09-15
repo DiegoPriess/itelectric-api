@@ -3,15 +3,14 @@ package com.iteletric.iteletricapi.config.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.iteletric.iteletricapi.config.security.userauthentication.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.iteletric.iteletricapi.models.user.UserDetailsImpl;
 
 @Service
 public class JwtTokenService {
@@ -28,22 +27,22 @@ public class JwtTokenService {
                     .withIssuer(ISSUER)
                     .withIssuedAt(creationDate())
                     .withExpiresAt(expirationDate())
-                    .withSubject(user.getUsername())
+                    .withClaim("userId", user.getId())
                     .sign(algorithm);
-        } catch (JWTCreationException exception){
+        } catch (JWTCreationException exception) {
             throw new JWTCreationException("Erro ao gerar token.", exception);
         }
     }
 
-    public String getSubjectFromToken(String token) {
+    public Long getUserIdFromToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             return JWT.require(algorithm)
                     .withIssuer(ISSUER)
                     .build()
                     .verify(token)
-                    .getSubject();
-        } catch (JWTVerificationException exception){
+                    .getClaim("userId").asLong();
+        } catch (JWTVerificationException exception) {
             throw new JWTVerificationException("Token inválido ou expirado.");
         }
     }
@@ -55,5 +54,4 @@ public class JwtTokenService {
     private Instant expirationDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
-
 }

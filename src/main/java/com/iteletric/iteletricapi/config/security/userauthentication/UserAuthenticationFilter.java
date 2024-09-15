@@ -1,8 +1,9 @@
-package com.iteletric.iteletricapi.config.security;
+package com.iteletric.iteletricapi.config.security.userauthentication;
 
-import com.iteletric.iteletricapi.models.user.User;
-import com.iteletric.iteletricapi.models.user.UserDetailsImpl;
-import com.iteletric.iteletricapi.repositories.user.UserRepository;
+import com.iteletric.iteletricapi.config.security.JwtTokenService;
+import com.iteletric.iteletricapi.config.security.SecurityConfiguration;
+import com.iteletric.iteletricapi.models.User;
+import com.iteletric.iteletricapi.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,12 +50,14 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String subject = jwtTokenService.getSubjectFromToken(token);
-        User user = userRepository.findByEmail(subject).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
-        UserDetailsImpl userDetails = new UserDetailsImpl(user);
+        Long userId = jwtTokenService.getUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                                  .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));;
+
+        UserDetailsImpl userDetailsImpl = new UserDetailsImpl(user);
 
         Authentication authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                new UsernamePasswordAuthenticationToken(userDetailsImpl, null, userDetailsImpl.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }

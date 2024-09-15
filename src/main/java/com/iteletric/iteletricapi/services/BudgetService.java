@@ -4,8 +4,8 @@ import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.dtos.budget.BudgetRequestDTO;
 import com.iteletric.iteletricapi.models.Budget;
 import com.iteletric.iteletricapi.models.Work;
+import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.BudgetRepository;
-import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,53 +17,52 @@ import java.util.List;
 public class BudgetService {
 
     private final BudgetRepository repository;
-    private final WorkRepository workRepository;
+    private final WorkService workService;
+    private final UserService userService;
 
     @Autowired
-    public BudgetService(BudgetRepository repository, WorkRepository workRepository) {
+    public BudgetService(BudgetRepository repository, WorkService workService, UserService userService) {
         this.repository = repository;
-        this.workRepository = workRepository;
+        this.workService = workService;
+        this.userService = userService;
     }
 
     public Budget create(BudgetRequestDTO budgetRequestDTO) {
-        List<Work> works = workRepository.findAllById(budgetRequestDTO.getWorkIdList());
-        if (works.isEmpty()) {
-            throw new BusinessException("Nenhum trabalho encontrado com os IDs fornecidos");
-        }
+        List<Work> workList = workService.getAllWorkSelectedById(budgetRequestDTO.getWorkIdList());
+        User customer = userService.getUserById(budgetRequestDTO.getCustomerId());
 
         Budget budget = Budget.builder()
-                .workList(works)
-                .deliveryForecast(budgetRequestDTO.getDeliveryForecast())
-                .build();
+                              .workList(workList)
+                              .customer(customer)
+                              .deliveryForecast(budgetRequestDTO.getDeliveryForecast())
+                              .build();
 
         return repository.save(budget);
     }
 
-    public Budget update(Long id, BudgetRequestDTO budgetRequestDTO) {
-        Budget budget = repository.findById(id)
-                .orElseThrow(() -> new BusinessException("Orçamento não encontrado"));
+    public Budget update(Long budgetId, BudgetRequestDTO budgetRequestDTO) {
+        Budget budget = getById(budgetId);
 
-        List<Work> works = workRepository.findAllById(budgetRequestDTO.getWorkIdList());
-        if (works.isEmpty()) {
-            throw new BusinessException("Nenhum trabalho encontrado com os IDs fornecidos");
-        }
+        List<Work> workList = workService.getAllWorkSelectedById(budgetRequestDTO.getWorkIdList());
+        User customer = userService.getUserById(budgetRequestDTO.getCustomerId());
 
-        budget.setWorkList(works);
+        budget.setWorkList(workList);
+        budget.setCustomer(customer);
         budget.setDeliveryForecast(budgetRequestDTO.getDeliveryForecast());
 
         return repository.save(budget);
     }
 
-    public void delete(Long id) {
-        Budget budget = repository.findById(id)
-                .orElseThrow(() -> new BusinessException("Orçamento não encontrado"));
+    public void delete(Long userId) {
+        Budget budget = repository.findById(userId)
+                                  .orElseThrow(() -> new BusinessException("Orçamento não encontrado"));
 
         repository.delete(budget);
     }
 
-    public Budget getById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new BusinessException("Orçamento não encontrado"));
+    public Budget getById(Long userId) {
+        return repository.findById(userId)
+                         .orElseThrow(() -> new BusinessException("Orçamento não encontrado"));
     }
 
     public Page<Budget> list(Pageable pageable) {

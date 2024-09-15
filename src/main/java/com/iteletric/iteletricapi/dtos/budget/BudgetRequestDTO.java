@@ -9,4 +9,5 @@ import java.util.List;
 public class BudgetRequestDTO {
     private List<Long> workIdList;
     private LocalDate deliveryForecast;
+    private Long customerId;
 }

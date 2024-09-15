@@ -1,4 +1,4 @@
-package com.iteletric.iteletricapi.models.user;
+package com.iteletric.iteletricapi.models;
 
 import com.iteletric.iteletricapi.enums.user.RoleName;
 import jakarta.persistence.*;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="roles")
+@Table(name="role")
 public class Role {
 
     @Id
