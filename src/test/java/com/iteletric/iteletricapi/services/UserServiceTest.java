@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -55,6 +56,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        when(securityConfiguration.passwordEncoder()).thenReturn(mock(PasswordEncoder.class));
     }
 
     @Test
@@ -76,6 +78,7 @@ class UserServiceTest {
     @Test
     void createUserSuccess() {
         UserRequest userRequest = new UserRequest("John Doe", "email@test.com", "password", RoleName.ROLE_CUSTOMER);
+
         when(repository.existsByEmail(anyString())).thenReturn(false);
         when(securityConfiguration.passwordEncoder().encode(anyString())).thenReturn("encodedPassword");
 
