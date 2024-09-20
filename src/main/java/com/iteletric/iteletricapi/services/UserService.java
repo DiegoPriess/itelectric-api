@@ -52,7 +52,7 @@ public class UserService {
 
 		UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
 
-		return new LoginResponse(jwtTokenService.generateToken(userDetailsImpl));
+		return new LoginResponse(userDetailsImpl.getId(), jwtTokenService.generateToken(userDetailsImpl));
 	}
 
 	public void create(UserRequest request) {
