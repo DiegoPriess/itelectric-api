@@ -17,11 +17,6 @@ import java.util.List;
 @Table(name = "users")
 public class User extends BaseModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private Long id;
-
     @Column(name="name", nullable = false)
     private String name;
 

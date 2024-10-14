@@ -19,10 +19,6 @@ import java.util.List;
 @Table(name = "budget")
 public class Budget extends BaseModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "budget_work",
             joinColumns = @JoinColumn(name = "budget_id"),

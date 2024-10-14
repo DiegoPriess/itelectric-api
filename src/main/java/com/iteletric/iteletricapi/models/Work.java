@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Table(name = "work")
 public class Work extends BaseModel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")

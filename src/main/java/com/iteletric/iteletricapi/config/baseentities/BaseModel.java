@@ -1,9 +1,7 @@
 package com.iteletric.iteletricapi.config.baseentities;
 
 import com.iteletric.iteletricapi.config.security.userauthentication.UserDetailsImpl;
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,6 +14,11 @@ import java.time.LocalDateTime;
 @Data
 @MappedSuperclass
 public abstract class BaseModel {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
+    private Long id;
 
     @Column(name = "date_created", updatable = false)
     @CreationTimestamp

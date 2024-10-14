@@ -18,11 +18,6 @@ import java.math.BigDecimal;
 @Table(name = "material")
 public class Material extends BaseModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private Long id;
-
     @Column(name="name", nullable = false)
     private String name;
 

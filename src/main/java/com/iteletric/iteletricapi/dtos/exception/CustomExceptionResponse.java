@@ -1,5 +1,5 @@
 package com.iteletric.iteletricapi.dtos.exception;
 
-public record BusinessExceptionResponse(
+public record CustomExceptionResponse(
     String message
 ){}
