@@ -4,7 +4,7 @@ import com.iteletric.iteletricapi.dtos.exception.CustomExceptionResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,8 +24,8 @@ public class ExceptionHandlerConfig {
         return ResponseEntity.badRequest().body(errors.stream().map(ValidationErrorData::new).toList());
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<CustomExceptionResponse> error401(BadCredentialsException ex) {
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<CustomExceptionResponse> authenticationError(AuthenticationException ex) {
         return new ResponseEntity<>(new CustomExceptionResponse(ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
