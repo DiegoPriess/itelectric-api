@@ -28,8 +28,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody @Valid LoginRequest request) {
-        LoginResponse token = userService.authenticate(request);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        LoginResponse response = userService.authenticate(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/create")
