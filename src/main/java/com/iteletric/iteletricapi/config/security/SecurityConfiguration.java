@@ -39,7 +39,8 @@ public class SecurityConfiguration {
             "/work",
             "/work/**",
             "/budget",
-            "/budget/**"
+            "/budget/**",
+            "/enum/**"
     };
 
     public static final String [] ENDPOINTS_CUSTOMER = {
