@@ -25,7 +25,6 @@ public class Material extends BaseModel {
     private BigDecimal price;
 
     @Column(name="unit_measure", nullable = false)
-    @Enumerated(EnumType.STRING)
     private UnitOfMeasure unitMeasure;
 
     @Column(name="quantity_unit_measure", nullable = false)

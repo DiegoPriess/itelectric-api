@@ -1,6 +1,7 @@
 package com.iteletric.iteletricapi.services;
 
 import com.iteletric.iteletricapi.config.exception.BusinessException;
+import com.iteletric.iteletricapi.dtos.material.MaterialResponse;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.repositories.MaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +44,18 @@ public class MaterialService {
         repository.delete(material);
     }
 
-    public Material getById(Long materialId) {
-        return repository.findById(materialId)
-                         .orElseThrow(() -> new BusinessException("Material não encontrado"));
+    public MaterialResponse getById(Long materialId) {
+        Material material = repository.findById(materialId)
+                                      .orElseThrow(() -> new BusinessException("Material não encontrado"));
+
+        return MaterialResponse.convert(material);
     }
 
-    public Page<Material> list(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<MaterialResponse> list(String name, Pageable pageable) {
+        if (name != null && !name.isEmpty()) {
+            return MaterialResponse.convert(repository.findByNameContainingIgnoreCase(name, pageable));
+        }
+        return MaterialResponse.convert(repository.findAll(pageable));
     }
 
     public List<Material> getAllMaterialSelectedById(List<Long> workIdList) {

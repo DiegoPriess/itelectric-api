@@ -1,5 +1,6 @@
 package com.iteletric.iteletricapi.controllers;
 
+import com.iteletric.iteletricapi.dtos.material.MaterialResponse;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.services.MaterialService;
 import jakarta.validation.Valid;
@@ -40,14 +41,15 @@ public class MaterialController {
     }
 
     @GetMapping("/{materialId}")
-    public ResponseEntity<Material> getById(@PathVariable Long materialId) {
-        Material material = materialService.getById(materialId);
+    public ResponseEntity<MaterialResponse> getById(@PathVariable Long materialId) {
+        MaterialResponse material = materialService.getById(materialId);
         return new ResponseEntity<>(material, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<Material>> list(Pageable pageable) {
-        Page<Material> materialList = materialService.list(pageable);
+    public ResponseEntity<Page<MaterialResponse>> list(@RequestParam(required = false) String name,
+                                                       Pageable pageable) {
+        Page<MaterialResponse> materialList = materialService.list(name, pageable);
         return new ResponseEntity<>(materialList, HttpStatus.OK);
     }
 }
