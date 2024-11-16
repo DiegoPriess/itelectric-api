@@ -1,7 +1,8 @@
 package com.iteletric.iteletricapi.controllers;
 
 import com.iteletric.iteletricapi.config.validation.ValidationGroups;
-import com.iteletric.iteletricapi.dtos.work.WorkRequestDTO;
+import com.iteletric.iteletricapi.dtos.work.WorkRequest;
+import com.iteletric.iteletricapi.dtos.work.WorkResponse;
 import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.services.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +25,14 @@ public class WorkController {
     }
 
     @PostMapping
-    public ResponseEntity<Work> create(@RequestBody @Validated(ValidationGroups.POST.class) WorkRequestDTO workRequestDTO) {
-        Work createdWork = service.create(workRequestDTO);
+    public ResponseEntity<Work> create(@RequestBody @Validated(ValidationGroups.POST.class) WorkRequest workRequest) {
+        Work createdWork = service.create(workRequest);
         return new ResponseEntity<>(createdWork, HttpStatus.CREATED);
     }
 
     @PutMapping("/{workId}")
-    public ResponseEntity<Work> update(@PathVariable Long workId, @RequestBody @Validated(ValidationGroups.PUT.class) WorkRequestDTO workRequestDTO) {
-        Work updatedWork = service.update(workId, workRequestDTO);
+    public ResponseEntity<Work> update(@PathVariable Long workId, @RequestBody @Validated(ValidationGroups.PUT.class) WorkRequest workRequest) {
+        Work updatedWork = service.update(workId, workRequest);
         return new ResponseEntity<>(updatedWork, HttpStatus.OK);
     }
 
@@ -48,8 +49,8 @@ public class WorkController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Work>> list(Pageable pageable) {
-        Page<Work> workList = service.list(pageable);
-        return new ResponseEntity<>(workList, HttpStatus.OK);
+    public ResponseEntity<Page<WorkResponse>> list(@RequestParam(required = false) String name, Pageable pageable) {
+        Page<WorkResponse> materialList = service.list(name, pageable);
+        return new ResponseEntity<>(materialList, HttpStatus.OK);
     }
 }

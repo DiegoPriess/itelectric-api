@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkRequestDTO {
+public class WorkRequest {
 
     @NotBlank(groups = ValidationGroups.POST.class, message = "O nome deve ser informado!")
     @OptionalNotBlank(groups = ValidationGroups.PUT.class, message = "O nome não pode ser vazio!")

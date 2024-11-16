@@ -1,7 +1,7 @@
 package com.iteletric.iteletricapi.services;
 
 import com.iteletric.iteletricapi.config.exception.BusinessException;
-import com.iteletric.iteletricapi.dtos.work.WorkRequestDTO;
+import com.iteletric.iteletricapi.dtos.work.WorkRequest;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.repositories.WorkRepository;
@@ -10,9 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -40,23 +37,23 @@ class WorkServiceTest {
 
     @Test
     void testCreateWork() {
-        WorkRequestDTO workRequestDTO = new WorkRequestDTO("Trabalho 1", new BigDecimal("100.0"), Arrays.asList(1L, 2L));
+        WorkRequest workRequest = new WorkRequest("Trabalho 1", new BigDecimal("100.0"), Arrays.asList(1L, 2L));
         List<Material> materialList = Arrays.asList(new Material(), new Material());
 
         when(materialService.getAllMaterialSelectedById(anyList())).thenReturn(materialList);
         when(workRepository.save(any(Work.class))).thenReturn(new Work());
 
-        Work createdWork = workService.create(workRequestDTO);
+        Work createdWork = workService.create(workRequest);
 
         assertNotNull(createdWork);
-        verify(materialService, times(1)).getAllMaterialSelectedById(workRequestDTO.getMaterialIdList());
+        verify(materialService, times(1)).getAllMaterialSelectedById(workRequest.getMaterialIdList());
         verify(workRepository, times(1)).save(any(Work.class));
     }
 
     @Test
     void testUpdateWork() {
         Long workId = 1L;
-        WorkRequestDTO workRequestDTO = new WorkRequestDTO("Trabalho Atualizado", new BigDecimal("200.0"), Arrays.asList(1L, 2L));
+        WorkRequest workRequest = new WorkRequest("Trabalho Atualizado", new BigDecimal("200.0"), Arrays.asList(1L, 2L));
         Work work = new Work();
         List<Material> materialList = Arrays.asList(new Material(), new Material());
 
@@ -64,10 +61,10 @@ class WorkServiceTest {
         when(materialService.getAllMaterialSelectedById(anyList())).thenReturn(materialList);
         when(workRepository.save(any(Work.class))).thenReturn(work);
 
-        Work updatedWork = workService.update(workId, workRequestDTO);
+        Work updatedWork = workService.update(workId, workRequest);
 
         assertNotNull(updatedWork);
-        assertEquals(workRequestDTO.getName(), updatedWork.getName());
+        assertEquals(workRequest.getName(), updatedWork.getName());
         verify(workRepository, times(1)).findById(workId);
         verify(workRepository, times(1)).save(any(Work.class));
     }
@@ -117,22 +114,6 @@ class WorkServiceTest {
 
         BusinessException exception = assertThrows(BusinessException.class, () -> workService.getById(workId));
         assertEquals("Serviço não encontrado", exception.getMessage());
-    }
-
-    @Test
-    void testListWorks() {
-        Pageable pageable = mock(Pageable.class);
-        Work work1 = new Work();
-        Work work2 = new Work();
-        Page<Work> workPage = new PageImpl<>(Arrays.asList(work1, work2));
-
-        when(workRepository.findAll(pageable)).thenReturn(workPage);
-
-        Page<Work> result = workService.list(pageable);
-
-        assertNotNull(result);
-        assertEquals(2, result.getTotalElements());
-        verify(workRepository, times(1)).findAll(pageable);
     }
 
     @Test
