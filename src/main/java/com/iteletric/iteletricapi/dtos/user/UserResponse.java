@@ -1,14 +1,14 @@
 package com.iteletric.iteletricapi.dtos.user;
 
-import lombok.AllArgsConstructor;
+import com.iteletric.iteletricapi.models.User;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class UserResponse {
     private Long id;
 
@@ -19,4 +19,26 @@ public class UserResponse {
     private LocalDateTime dateCreated;
 
     private LocalDateTime dateUpdated;
+
+    public static UserResponse convert(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .dateCreated(user.getDateCreated())
+                .dateUpdated(user.getDateUpdated())
+                .build();
+    }
+
+    public static Page<UserResponse> convert(Page<User> userPage) {
+        return userPage.map(user ->
+                UserResponse.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .email(user.getEmail())
+                        .dateCreated(user.getDateCreated())
+                        .dateUpdated(user.getDateUpdated())
+                        .build()
+        );
+    }
 }

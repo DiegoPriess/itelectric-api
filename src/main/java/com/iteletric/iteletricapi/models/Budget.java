@@ -1,6 +1,7 @@
 package com.iteletric.iteletricapi.models;
 
 import com.iteletric.iteletricapi.config.baseentities.BaseModel;
+import com.iteletric.iteletricapi.enums.budget.BudgetStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,9 @@ public class Budget extends BaseModel {
 
     @Column(name = "total_value", nullable = false)
     private BigDecimal totalValue;
+
+    @Column(name = "status")
+    private BudgetStatus status = BudgetStatus.PENDING;
 
     public BigDecimal calculateTotalValue() {
         BigDecimal total = BigDecimal.ZERO;

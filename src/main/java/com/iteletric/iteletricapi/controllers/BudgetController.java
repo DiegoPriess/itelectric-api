@@ -1,8 +1,8 @@
 package com.iteletric.iteletricapi.controllers;
 
 import com.iteletric.iteletricapi.config.validation.ValidationGroups;
-import com.iteletric.iteletricapi.dtos.budget.BudgetRequestDTO;
-import com.iteletric.iteletricapi.models.Budget;
+import com.iteletric.iteletricapi.dtos.budget.BudgetRequest;
+import com.iteletric.iteletricapi.dtos.budget.BudgetResponse;
 import com.iteletric.iteletricapi.services.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,14 +24,14 @@ public class BudgetController {
     }
 
     @PostMapping
-    public ResponseEntity<Budget> create(@RequestBody @Validated(ValidationGroups.POST.class) BudgetRequestDTO budgetRequestDTO) {
-        Budget createdBudget = budgetService.create(budgetRequestDTO);
+    public ResponseEntity<BudgetResponse> create(@RequestBody @Validated(ValidationGroups.POST.class) BudgetRequest budgetRequest) {
+        BudgetResponse createdBudget = BudgetResponse.convert(budgetService.create(budgetRequest));
         return new ResponseEntity<>(createdBudget, HttpStatus.CREATED);
     }
 
     @PutMapping("/{budgetId}")
-    public ResponseEntity<Budget> update(@PathVariable Long budgetId, @RequestBody @Validated(ValidationGroups.PUT.class) BudgetRequestDTO budgetRequestDTO) {
-        Budget updatedBudget = budgetService.update(budgetId, budgetRequestDTO);
+    public ResponseEntity<BudgetResponse> update(@PathVariable Long budgetId, @RequestBody @Validated(ValidationGroups.PUT.class) BudgetRequest budgetRequest) {
+        BudgetResponse updatedBudget = BudgetResponse.convert(budgetService.update(budgetId, budgetRequest));
         return new ResponseEntity<>(updatedBudget, HttpStatus.OK);
     }
 
@@ -42,14 +42,26 @@ public class BudgetController {
     }
 
     @GetMapping("/{budgetId}")
-    public ResponseEntity<Budget> getById(@PathVariable Long budgetId) {
-        Budget budget = budgetService.getById(budgetId);
+    public ResponseEntity<BudgetResponse> getById(@PathVariable Long budgetId) {
+        BudgetResponse budget = BudgetResponse.convert(budgetService.getById(budgetId));
         return new ResponseEntity<>(budget, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<Budget>> list(Pageable pageable) {
-        Page<Budget> budgetList = budgetService.list(pageable);
+    public ResponseEntity<Page<BudgetResponse>> list(Pageable pageable) {
+        Page<BudgetResponse> budgetList = BudgetResponse.convert(budgetService.list(pageable));
         return new ResponseEntity<>(budgetList, HttpStatus.OK);
+    }
+
+    @PutMapping("/{budgetId}/approve")
+    public ResponseEntity<Void> approve(@PathVariable Long budgetId) {
+        budgetService.approve(budgetId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/{budgetId}/deny")
+    public ResponseEntity<Void> deny(@PathVariable Long budgetId) {
+        budgetService.deny(budgetId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

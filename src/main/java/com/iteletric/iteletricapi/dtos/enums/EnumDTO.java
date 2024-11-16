@@ -1,16 +1,14 @@
-package com.iteletric.iteletricapi.dtos;
+package com.iteletric.iteletricapi.dtos.enums;
 
 import lombok.Data;
 
 @Data
-public class UnitOfMeasureDTO {
+public class EnumDTO {
     private String name;
     private String label;
 
-    public UnitOfMeasureDTO(String name, String label) {
+    public EnumDTO(String name, String label) {
         this.name = name;
         this.label = label;
     }
-
-
 }

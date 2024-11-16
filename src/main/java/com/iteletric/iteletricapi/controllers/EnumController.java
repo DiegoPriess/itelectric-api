@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.controllers;
 
-import com.iteletric.iteletricapi.dtos.UnitOfMeasureDTO;
+import com.iteletric.iteletricapi.dtos.enums.EnumDTO;
 import com.iteletric.iteletricapi.enums.material.UnitOfMeasure;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 public class EnumController {
 
     @GetMapping("/unitOfMeasure")
-    public ResponseEntity<List<UnitOfMeasureDTO>> listUnitOfMeasure() {
-        List<UnitOfMeasureDTO> unitOfMeasureDTOs = Arrays.stream(UnitOfMeasure.values())
-                                                         .map(unit -> new UnitOfMeasureDTO(unit.name(), unit.getLabel()))
+    public ResponseEntity<List<EnumDTO>> listUnitOfMeasure() {
+        List<EnumDTO> enumDTOS = Arrays.stream(UnitOfMeasure.values())
+                                                         .map(unit -> new EnumDTO(unit.name(), unit.getLabel()))
                                                          .collect(Collectors.toList());
 
-        return new ResponseEntity<>(unitOfMeasureDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(enumDTOS, HttpStatus.OK);
     }
 }

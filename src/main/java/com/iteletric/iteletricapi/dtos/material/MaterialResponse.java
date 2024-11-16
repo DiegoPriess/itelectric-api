@@ -1,6 +1,6 @@
 package com.iteletric.iteletricapi.dtos.material;
 
-import com.iteletric.iteletricapi.dtos.UnitOfMeasureDTO;
+import com.iteletric.iteletricapi.dtos.enums.EnumDTO;
 import com.iteletric.iteletricapi.models.Material;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,14 +17,14 @@ public class MaterialResponse {
     private Long id;
     private String name;
     private BigDecimal price;
-    private UnitOfMeasureDTO unitMeasure;
+    private EnumDTO unitMeasure;
     private BigDecimal quantityUnitMeasure;
 
     public static MaterialResponse convert(Material material) {
         return MaterialResponse.builder().id(material.getId())
                 .name(material.getName())
                 .price(material.getPrice())
-                .unitMeasure(new UnitOfMeasureDTO(material.getUnitMeasure().toString(), material.getUnitMeasure().getLabel()))
+                .unitMeasure(new EnumDTO(material.getUnitMeasure().toString(), material.getUnitMeasure().getLabel()))
                 .quantityUnitMeasure(material.getQuantityUnitMeasure())
                 .build();
     }
@@ -35,7 +35,7 @@ public class MaterialResponse {
                         .id(material.getId())
                         .name(material.getName())
                         .price(material.getPrice())
-                        .unitMeasure(new UnitOfMeasureDTO(material.getUnitMeasure().toString(), material.getUnitMeasure().getLabel()))
+                        .unitMeasure(new EnumDTO(material.getUnitMeasure().toString(), material.getUnitMeasure().getLabel()))
                         .quantityUnitMeasure(material.getQuantityUnitMeasure())
                         .build()
         );

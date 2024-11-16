@@ -8,7 +8,7 @@ import com.iteletric.iteletricapi.dtos.user.LoginRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
 import com.iteletric.iteletricapi.dtos.user.UserResponse;
-import com.iteletric.iteletricapi.mappers.UserMapper;
+import com.iteletric.iteletricapi.enums.user.RoleName;
 import com.iteletric.iteletricapi.models.Role;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.UserRepository;
@@ -18,9 +18,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -29,19 +32,16 @@ public class UserService {
 	private final JwtTokenService jwtTokenService;
 	private final UserRepository repository;
 	private final SecurityConfiguration securityConfiguration;
-	private final UserMapper userMapper;
 
 	@Autowired
 	UserService(AuthenticationManager authenticationManager,
 				JwtTokenService jwtTokenService,
 				UserRepository repository,
-				SecurityConfiguration securityConfiguration,
-				UserMapper userMapper) {
+				SecurityConfiguration securityConfiguration) {
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenService = jwtTokenService;
 		this.repository = repository;
 		this.securityConfiguration = securityConfiguration;
-		this.userMapper = userMapper;
 	}
 
 	public LoginResponse authenticate(LoginRequest request) {
@@ -91,15 +91,58 @@ public class UserService {
 	public UserResponse getById(Long userId) {
 		User user = repository.findById(userId)
 							  .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
-		return userMapper.toUserResponseDTO(user);
+		return UserResponse.convert(user);
 	}
 
 	public User getUserById(Long userId) {
 		return repository.findById(userId).orElseThrow(() -> new BusinessException("Usuário não encontrado"));
 	}
 
-	public Page<UserResponse> list(Pageable pageable) {
-		Page<User> users = repository.findAll(pageable);
-		return users.map(userMapper::toUserResponseDTO);
+	public Page<UserResponse> list(String role, Pageable pageable) {
+		Page<User> users;
+
+		if (role != null && !role.isEmpty()) {
+			users = repository.findByRoleName(role, pageable);
+		} else {
+			users = repository.findAll(pageable);
+		}
+
+		return UserResponse.convert(users);
+	}
+
+	public Long getCurrentUserId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == "anonymousUser") return null;
+
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		return userDetails.getId();
+	}
+
+	public User createCustomerIfNecessary(String email) {
+		Optional<User> user = repository.findByEmail(email);
+		if (user.isPresent()) return user.get();
+
+		User newUser = User.builder()
+				.name(email)
+				.email(email)
+				.password(securityConfiguration.passwordEncoder().encode(generatePassword()))
+				.roles(List.of(Role.builder().name(RoleName.ROLE_CUSTOMER).build()))
+				.deleted(0)
+				.build();
+
+		return repository.save(newUser);
+	}
+
+	public static String generatePassword() {
+		final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=<>?";
+		SecureRandom random = new SecureRandom();
+		StringBuilder password = new StringBuilder(6);
+
+		for (int i = 0; i < 6; i++) {
+			int pas = random.nextInt(characters.length());
+			password.append(characters.charAt(pas));
+		}
+
+		return password.toString();
 	}
 }

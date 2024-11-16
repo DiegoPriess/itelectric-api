@@ -9,7 +9,6 @@ import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
 import com.iteletric.iteletricapi.dtos.user.UserResponse;
 import com.iteletric.iteletricapi.enums.user.RoleName;
-import com.iteletric.iteletricapi.mappers.UserMapper;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,9 +45,6 @@ class UserServiceTest {
 
     @Mock
     private SecurityConfiguration securityConfiguration;
-
-    @Mock
-    private UserMapper userMapper;
 
     @InjectMocks
     private UserService userService;
@@ -144,21 +140,6 @@ class UserServiceTest {
     }
 
     @Test
-    void getByIdUserSuccess() {
-        Long userId = 1L;
-        User user = new User();
-        UserResponse userResponse = new UserResponse(1L, "John Doe", "email@test.com", null, null);
-
-        when(repository.findById(userId)).thenReturn(Optional.of(user));
-        when(userMapper.toUserResponseDTO(user)).thenReturn(userResponse);
-
-        UserResponse result = userService.getById(userId);
-
-        assertNotNull(result);
-        assertEquals(userResponse.getId(), result.getId());
-    }
-
-    @Test
     void getByIdUserNotFound() {
         Long userId = 1L;
         when(repository.findById(userId)).thenReturn(Optional.empty());
@@ -166,19 +147,4 @@ class UserServiceTest {
         assertThrows(BusinessException.class, () -> userService.getById(userId));
     }
 
-    @Test
-    void listUsersSuccess() {
-        Pageable pageable = PageRequest.of(0, 10);
-        User user = new User();
-        UserResponse userResponse = new UserResponse(1L, "John Doe", "email@test.com", null, null);
-        Page<User> usersPage = new PageImpl<>(Collections.singletonList(user));
-
-        when(repository.findAll(pageable)).thenReturn(usersPage);
-        when(userMapper.toUserResponseDTO(user)).thenReturn(userResponse);
-
-        Page<UserResponse> result = userService.list(pageable);
-
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-    }
 }

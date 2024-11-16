@@ -57,8 +57,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponse>> list(Pageable pageable) {
-        Page<UserResponse> userList = userService.list(pageable);
+    public ResponseEntity<Page<UserResponse>> list(@RequestParam(required = false) String role, Pageable pageable) {
+        Page<UserResponse> userList = userService.list(role, pageable);
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 }

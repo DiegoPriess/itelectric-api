@@ -8,11 +8,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class BudgetRequestDTO {
+public class BudgetRequest {
     private List<Long> workIdList;
 
     private LocalDate deliveryForecast;
 
     @NotNull(groups = ValidationGroups.POST.class, message = "O cliente deve ser informado!")
-    private Long customerId;
+    private String customerEmail;
 }

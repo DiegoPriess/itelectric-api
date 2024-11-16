@@ -15,11 +15,14 @@ import java.util.List;
 public class MaterialService {
 
     @Autowired
-    MaterialService(MaterialRepository repository) {
+    MaterialService(MaterialRepository repository, UserService userService) {
         this.repository = repository;
+        this.userService = userService;
     }
 
     private final MaterialRepository repository;
+
+    private final UserService userService;
 
     public void create(Material material) {
         repository.save(material);
@@ -52,10 +55,10 @@ public class MaterialService {
     }
 
     public Page<MaterialResponse> list(String name, Pageable pageable) {
-        if (name != null && !name.isEmpty()) {
-            return MaterialResponse.convert(repository.findByNameContainingIgnoreCase(name, pageable));
-        }
-        return MaterialResponse.convert(repository.findAll(pageable));
+        final Long currentUserId = userService.getCurrentUserId();
+
+        if (name != null && !name.isEmpty()) return MaterialResponse.convert(repository.findByOwnerAndNameContainingIgnoreCase(currentUserId, name, pageable));
+        return MaterialResponse.convert(repository.findByOwner(currentUserId, pageable));
     }
 
     public List<Material> getAllMaterialSelectedById(List<Long> workIdList) {
