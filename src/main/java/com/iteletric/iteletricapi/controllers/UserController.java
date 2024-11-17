@@ -5,6 +5,7 @@ import com.iteletric.iteletricapi.dtos.user.LoginRequest;
 import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
 import com.iteletric.iteletricapi.dtos.user.UserResponse;
+import com.iteletric.iteletricapi.enums.user.RoleName;
 import com.iteletric.iteletricapi.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponse>> list(@RequestParam(required = false) String role, Pageable pageable) {
+    public ResponseEntity<Page<UserResponse>> list(@RequestParam(required = false) RoleName role, Pageable pageable) {
         Page<UserResponse> userList = userService.list(role, pageable);
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }

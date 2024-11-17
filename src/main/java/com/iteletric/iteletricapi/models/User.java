@@ -1,13 +1,12 @@
 package com.iteletric.iteletricapi.models;
 
 import com.iteletric.iteletricapi.config.baseentities.BaseModel;
+import com.iteletric.iteletricapi.enums.user.RoleName;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -29,9 +28,7 @@ public class User extends BaseModel {
     @Column(name="deleted", nullable = false, columnDefinition = "INTEGER DEFAULT 0")
     private Integer deleted;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(name="users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name="role_id"))
-    private List<Role> roles;
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RoleName role;
 }

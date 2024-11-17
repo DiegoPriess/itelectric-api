@@ -9,7 +9,6 @@ import com.iteletric.iteletricapi.dtos.user.LoginResponse;
 import com.iteletric.iteletricapi.dtos.user.UserRequest;
 import com.iteletric.iteletricapi.dtos.user.UserResponse;
 import com.iteletric.iteletricapi.enums.user.RoleName;
-import com.iteletric.iteletricapi.models.Role;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,7 +54,11 @@ public class UserService {
 
 		UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
 
-		return new LoginResponse(userDetailsImpl.getId(), jwtTokenService.generateToken(userDetailsImpl));
+		return new LoginResponse(
+				userDetailsImpl.getId(),
+				jwtTokenService.generateToken(userDetailsImpl),
+				userDetailsImpl.getAuthorities().iterator().next().getAuthority()
+		);
 	}
 
 	public void create(UserRequest request) {
@@ -66,7 +68,7 @@ public class UserService {
 						   .name(request.getName())
 						   .email(request.getEmail())
 						   .password(securityConfiguration.passwordEncoder().encode(request.getPassword()))
-						   .roles(List.of(Role.builder().name(request.getRole()).build()))
+						   .role(request.getRole())
 						   .deleted(0)
 						   .build();
 
@@ -102,11 +104,11 @@ public class UserService {
 		return repository.findById(userId).orElseThrow(() -> new BusinessException("Usuário não encontrado"));
 	}
 
-	public Page<UserResponse> list(String role, Pageable pageable) {
+	public Page<UserResponse> list(RoleName role, Pageable pageable) {
 		Page<User> users;
 
-		if (role != null && !role.isEmpty()) {
-			users = repository.findByRoleName(role, pageable);
+		if (role != null) {
+			users = repository.findByRole(role, pageable);
 		} else {
 			users = repository.findAll(pageable);
 		}
@@ -131,7 +133,7 @@ public class UserService {
 				.name(email)
 				.email(email)
 				.password(securityConfiguration.passwordEncoder().encode(pass))
-				.roles(List.of(Role.builder().name(RoleName.ROLE_CUSTOMER).build()))
+				.role(RoleName.ROLE_CUSTOMER)
 				.deleted(0)
 				.build();
 
