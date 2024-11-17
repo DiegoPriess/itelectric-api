@@ -6,7 +6,9 @@ import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.repositories.MaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,10 +57,16 @@ public class MaterialService {
     }
 
     public Page<MaterialResponse> list(String name, Pageable pageable) {
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.ASC, "id")
+        );
+
         final Long currentUserId = userService.getCurrentUserId();
 
-        if (name != null && !name.isEmpty()) return MaterialResponse.convert(repository.findByOwnerAndNameContainingIgnoreCase(currentUserId, name, pageable));
-        return MaterialResponse.convert(repository.findByOwner(currentUserId, pageable));
+        if (name != null && !name.isEmpty()) return MaterialResponse.convert(repository.findByOwnerAndNameContainingIgnoreCase(currentUserId, name, sortedPageable));
+        return MaterialResponse.convert(repository.findByOwner(currentUserId, sortedPageable));
     }
 
     public List<Material> getAllMaterialSelectedById(List<Long> workIdList) {

@@ -37,7 +37,7 @@ public class Budget extends BaseModel {
     private BigDecimal totalValue;
 
     @Column(name = "status")
-    private BudgetStatus status = BudgetStatus.PENDING;
+    private BudgetStatus status;
 
     public BigDecimal calculateTotalValue() {
         BigDecimal total = BigDecimal.ZERO;

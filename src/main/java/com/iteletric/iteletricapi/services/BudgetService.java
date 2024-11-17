@@ -9,7 +9,9 @@ import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.repositories.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +30,9 @@ public class BudgetService {
         this.userService = userService;
     }
 
-    public Budget create(BudgetRequest budgetRequest) {
+    public void create(BudgetRequest budgetRequest) {
+        if (budgetRequest.getWorkIdList().isEmpty()) throw new BusinessException("Para criar um orçamento, é necessário selecionar pelo menos um trabalho");
+
         User customer = userService.createCustomerIfNecessary(budgetRequest.getCustomerEmail());
         List<Work> workList = workService.getAllWorkSelectedById(budgetRequest.getWorkIdList());
 
@@ -36,14 +40,16 @@ public class BudgetService {
                 .workList(workList)
                 .customer(customer)
                 .deliveryForecast(budgetRequest.getDeliveryForecast())
+                .status(BudgetStatus.PENDING)
                 .build();
 
-        return repository.save(budget);
+        repository.save(budget);
     }
 
-    public Budget update(Long budgetId, BudgetRequest budgetRequest) {
-        Budget budget = getById(budgetId);
+    public void update(Long budgetId, BudgetRequest budgetRequest) {
+        if (budgetRequest.getWorkIdList().isEmpty()) throw new BusinessException("Para alterar um orçamento, é necessário manter pelo menos um trabalho");
 
+        Budget budget = getById(budgetId);
         User customer = userService.createCustomerIfNecessary(budgetRequest.getCustomerEmail());
         List<Work> workList = workService.getAllWorkSelectedById(budgetRequest.getWorkIdList());
 
@@ -51,7 +57,7 @@ public class BudgetService {
         budget.setCustomer(customer);
         budget.setDeliveryForecast(budgetRequest.getDeliveryForecast());
 
-        return repository.save(budget);
+        repository.save(budget);
     }
 
     public void delete(Long userId) {
@@ -66,8 +72,17 @@ public class BudgetService {
                 .orElseThrow(() -> new BusinessException("Orçamento não encontrado"));
     }
 
-    public Page<Budget> list(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<Budget> list(String customerEmail, Pageable pageable) {
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.ASC, "id")
+        );
+
+        final Long currentUserId = userService.getCurrentUserId();
+
+        if (customerEmail != null && !customerEmail.isEmpty()) return repository.findByOwnerAndCustomerEmail(currentUserId, customerEmail, sortedPageable);
+        return repository.findByOwner(currentUserId, sortedPageable);
     }
 
     public void approve(Long budgetId) {

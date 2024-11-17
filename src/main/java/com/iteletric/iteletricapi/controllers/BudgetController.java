@@ -25,14 +25,14 @@ public class BudgetController {
 
     @PostMapping
     public ResponseEntity<BudgetResponse> create(@RequestBody @Validated(ValidationGroups.POST.class) BudgetRequest budgetRequest) {
-        BudgetResponse createdBudget = BudgetResponse.convert(budgetService.create(budgetRequest));
-        return new ResponseEntity<>(createdBudget, HttpStatus.CREATED);
+        budgetService.create(budgetRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{budgetId}")
     public ResponseEntity<BudgetResponse> update(@PathVariable Long budgetId, @RequestBody @Validated(ValidationGroups.PUT.class) BudgetRequest budgetRequest) {
-        BudgetResponse updatedBudget = BudgetResponse.convert(budgetService.update(budgetId, budgetRequest));
-        return new ResponseEntity<>(updatedBudget, HttpStatus.OK);
+        budgetService.update(budgetId, budgetRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{budgetId}")
@@ -48,8 +48,9 @@ public class BudgetController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BudgetResponse>> list(Pageable pageable) {
-        Page<BudgetResponse> budgetList = BudgetResponse.convert(budgetService.list(pageable));
+    public ResponseEntity<Page<BudgetResponse>> list(@RequestParam(required = false) String customerEmail,
+                                                     Pageable pageable) {
+        Page<BudgetResponse> budgetList = BudgetResponse.convert(budgetService.list(customerEmail, pageable));
         return new ResponseEntity<>(budgetList, HttpStatus.OK);
     }
 
