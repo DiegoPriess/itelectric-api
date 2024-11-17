@@ -30,6 +30,8 @@ public class WorkService {
     }
 
     public Work create(WorkRequest workRequest) {
+        if (workRequest.getMaterialIdList().isEmpty()) throw new BusinessException("Para criar um trabalho, é necessário selecionar pelo menos um material");
+
         List<Material> materialList = materialService.getAllMaterialSelectedById(workRequest.getMaterialIdList());
 
         Work work = new Work();
@@ -41,8 +43,9 @@ public class WorkService {
     }
 
     public Work update(Long workId, WorkRequest workRequest) {
-        Work work = getById(workId);
+        if (workRequest.getMaterialIdList().isEmpty()) throw new BusinessException("Para alterar um trabalho, é necessário manter pelo menos um material");
 
+        Work work = getById(workId);
         List<Material> materialList = materialService.getAllMaterialSelectedById(workRequest.getMaterialIdList());
 
         work.setName(workRequest.getName());
