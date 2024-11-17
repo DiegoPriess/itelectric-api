@@ -23,11 +23,14 @@ public class BudgetService {
     private final WorkService workService;
     private final UserService userService;
 
+    private final MailService mailService;
+
     @Autowired
-    public BudgetService(BudgetRepository repository, WorkService workService, UserService userService) {
+    public BudgetService(BudgetRepository repository, WorkService workService, UserService userService, MailService mailService) {
         this.repository = repository;
         this.workService = workService;
         this.userService = userService;
+        this.mailService = mailService;
     }
 
     public void create(BudgetRequest budgetRequest) {
@@ -44,6 +47,8 @@ public class BudgetService {
                 .build();
 
         repository.save(budget);
+
+        this.mailService.sendHtml(customer.getEmail(), "Novo orçamento criado para você, venha conferir!", this.mailService.createNewBudgetEmail());
     }
 
     public void update(Long budgetId, BudgetRequest budgetRequest) {

@@ -33,15 +33,19 @@ public class UserService {
 	private final UserRepository repository;
 	private final SecurityConfiguration securityConfiguration;
 
+	private final MailService mailService;
+
 	@Autowired
 	UserService(AuthenticationManager authenticationManager,
 				JwtTokenService jwtTokenService,
 				UserRepository repository,
-				SecurityConfiguration securityConfiguration) {
+				SecurityConfiguration securityConfiguration,
+				MailService mailService) {
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenService = jwtTokenService;
 		this.repository = repository;
 		this.securityConfiguration = securityConfiguration;
+		this.mailService = mailService;
 	}
 
 	public LoginResponse authenticate(LoginRequest request) {
@@ -122,13 +126,16 @@ public class UserService {
 		Optional<User> user = repository.findByEmail(email);
 		if (user.isPresent()) return user.get();
 
+		String pass = generatePassword();
 		User newUser = User.builder()
 				.name(email)
 				.email(email)
-				.password(securityConfiguration.passwordEncoder().encode(generatePassword()))
+				.password(securityConfiguration.passwordEncoder().encode(pass))
 				.roles(List.of(Role.builder().name(RoleName.ROLE_CUSTOMER).build()))
 				.deleted(0)
 				.build();
+
+		this.mailService.sendHtml(email, "Bem-vindo ao itelectric!!!", this.mailService.createWelcomeEmail(email, pass));
 
 		return repository.save(newUser);
 	}
