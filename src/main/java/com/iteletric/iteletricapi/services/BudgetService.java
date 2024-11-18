@@ -84,10 +84,21 @@ public class BudgetService {
                 Sort.by(Sort.Direction.ASC, "id")
         );
 
-        final Long currentUserId = userService.getCurrentUserId();
+        final User currentUser = userService.getCurrentUser();
 
-        if (customerEmail != null && !customerEmail.isEmpty()) return repository.findByOwnerAndCustomerEmail(currentUserId, customerEmail, sortedPageable);
-        return repository.findByOwner(currentUserId, sortedPageable);
+        if (customerEmail != null && !customerEmail.isEmpty()) return repository.findByOwnerAndCustomerEmail(currentUser, customerEmail, sortedPageable);
+        return repository.findByOwner(currentUser, sortedPageable);
+    }
+
+    public Page<Budget> customerList(Pageable pageable) {
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.ASC, "id")
+        );
+
+        final User currentUser = userService.getCurrentUser();
+        return repository.findByCustomer(currentUser, sortedPageable);
     }
 
     public void approve(Long budgetId) {

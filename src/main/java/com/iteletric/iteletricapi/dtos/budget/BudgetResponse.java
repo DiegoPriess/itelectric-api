@@ -21,6 +21,7 @@ public class BudgetResponse {
     private UserResponse customer;
     private BigDecimal totalValue;
     private EnumDTO status;
+    private UserResponse owner;
 
     public static BudgetResponse convert(Budget budget) {
         return BudgetResponse.builder()
@@ -30,6 +31,7 @@ public class BudgetResponse {
                 .customer(UserResponse.convert(budget.getCustomer()))
                 .totalValue(budget.getTotalValue())
                 .status(new EnumDTO(budget.getStatus().toString(), budget.getStatus().getLabel()))
+                .owner(UserResponse.convert(budget.getOwner()))
                 .build();
     }
 
@@ -42,6 +44,7 @@ public class BudgetResponse {
                         .customer(UserResponse.convert(budget.getCustomer()))
                         .totalValue(budget.getTotalValue())
                         .status(new EnumDTO(budget.getStatus().toString(), budget.getStatus().getLabel()))
+                        .owner(UserResponse.convert(budget.getOwner()))
                         .build()
         );
     }

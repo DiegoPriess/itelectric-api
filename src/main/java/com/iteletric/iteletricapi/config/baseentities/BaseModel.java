@@ -1,6 +1,8 @@
 package com.iteletric.iteletricapi.config.baseentities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iteletric.iteletricapi.config.security.userauthentication.UserDetailsImpl;
+import com.iteletric.iteletricapi.models.User;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
@@ -28,8 +30,10 @@ public abstract class BaseModel {
     @UpdateTimestamp
     private LocalDateTime dateUpdated;
 
-    @Column(name = "owner_id")
-    private Long owner;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
     @PrePersist
     @Transactional
@@ -38,6 +42,6 @@ public abstract class BaseModel {
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == "anonymousUser") return;
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        this.owner = userDetails.getId();
+        this.owner = userDetails.getUser();
     }
 }

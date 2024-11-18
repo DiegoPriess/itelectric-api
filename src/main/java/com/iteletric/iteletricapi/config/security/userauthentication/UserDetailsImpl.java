@@ -10,7 +10,7 @@ import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    public final User user;
 
     public UserDetailsImpl(User user) {
         this.user = user;
@@ -53,5 +53,9 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

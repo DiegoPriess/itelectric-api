@@ -116,12 +116,12 @@ public class UserService {
 		return UserResponse.convert(users);
 	}
 
-	public Long getCurrentUserId() {
+	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == "anonymousUser") return null;
 
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		return userDetails.getId();
+		return userDetails.getUser();
 	}
 
 	public User createCustomerIfNecessary(String email) {

@@ -4,6 +4,7 @@ import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.dtos.work.WorkRequest;
 import com.iteletric.iteletricapi.dtos.work.WorkResponse;
 import com.iteletric.iteletricapi.models.Material;
+import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,10 +75,10 @@ public class WorkService {
                 Sort.by(Sort.Direction.ASC, "id")
         );
 
-        final Long currentUserId = userService.getCurrentUserId();
+        final User currentUser = userService.getCurrentUser();
 
-        if (name != null && !name.isEmpty()) return WorkResponse.convert(repository.findByOwnerAndNameContainingIgnoreCase(currentUserId, name, sortedPageable));
-        return WorkResponse.convert(repository.findByOwner(currentUserId, sortedPageable));
+        if (name != null && !name.isEmpty()) return WorkResponse.convert(repository.findByOwnerAndNameContainingIgnoreCase(currentUser, name, sortedPageable));
+        return WorkResponse.convert(repository.findByOwner(currentUser, sortedPageable));
     }
 
     public List<Work> getAllWorkSelectedById(List<Long> workIdList) {

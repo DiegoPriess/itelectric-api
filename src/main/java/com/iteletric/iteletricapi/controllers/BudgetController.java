@@ -54,6 +54,12 @@ public class BudgetController {
         return new ResponseEntity<>(budgetList, HttpStatus.OK);
     }
 
+    @GetMapping("/customer-list")
+    public ResponseEntity<Page<BudgetResponse>> customerList(Pageable pageable) {
+        Page<BudgetResponse> budgetList = BudgetResponse.convert(budgetService.customerList(pageable));
+        return new ResponseEntity<>(budgetList, HttpStatus.OK);
+    }
+
     @PutMapping("/{budgetId}/approve")
     public ResponseEntity<Void> approve(@PathVariable Long budgetId) {
         budgetService.approve(budgetId);
