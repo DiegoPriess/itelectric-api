@@ -13,9 +13,10 @@ import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -23,16 +24,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-class UserServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class UserServiceTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -41,110 +45,144 @@ class UserServiceTest {
     private JwtTokenService jwtTokenService;
 
     @Mock
-    private UserRepository repository;
+    private UserRepository userRepository;
 
     @Mock
     private SecurityConfiguration securityConfiguration;
 
+    @Mock
+    private MailService mailService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserService userService;
 
+    private User user;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        when(securityConfiguration.passwordEncoder()).thenReturn(mock(PasswordEncoder.class));
+        user = User.builder()
+                .email("diegopriess.dev@gmail.com")
+                .password("password")
+                .role(RoleName.ROLE_CUSTOMER)
+                .deleted(0)
+                .build();
+        user.setId(1L);
     }
 
     @Test
-    void authenticateUserSuccess() {
-        LoginRequest loginRequest = new LoginRequest("email@test.com", "password");
+    void authenticate_ShouldReturnLoginResponse() {
+        LoginRequest loginRequest = new LoginRequest("diegopriess.dev@gmail.com", "password");
+        UserDetailsImpl userDetails = new UserDetailsImpl(user);
         Authentication authentication = mock(Authentication.class);
-        UserDetailsImpl userDetails = mock(UserDetailsImpl.class);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(authentication);
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
-        when(jwtTokenService.generateToken(any(UserDetailsImpl.class))).thenReturn("mockToken");
+        when(jwtTokenService.generateToken(userDetails)).thenReturn("token");
 
-        LoginResponse loginResponse = userService.authenticate(loginRequest);
+        LoginResponse response = userService.authenticate(loginRequest);
 
-        assertNotNull(loginResponse);
-        assertEquals("mockToken", loginResponse.getToken());
+        assertEquals(1L, response.getUserId());
+        assertEquals("token", response.getToken());
     }
 
     @Test
-    void createUserSuccess() {
-        UserRequest userRequest = new UserRequest("John Doe", "email@test.com", "password", RoleName.ROLE_CUSTOMER);
+    void getCurrentUser_ShouldReturnCurrentUser() {
+        Authentication authentication = mock(Authentication.class);
+        UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
-        when(repository.existsByEmail(anyString())).thenReturn(false);
-        when(securityConfiguration.passwordEncoder().encode(anyString())).thenReturn("encodedPassword");
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn(userDetails);
 
-        userService.create(userRequest);
+        User result = userService.getCurrentUser();
 
-        verify(repository, times(1)).save(any(User.class));
+        assertNotNull(result);
+        assertEquals("diegopriess.dev@gmail.com", result.getEmail());
     }
 
     @Test
-    void createUserEmailAlreadyExists() {
-        UserRequest userRequest = new UserRequest("John Doe", "email@test.com", "password", RoleName.ROLE_CUSTOMER);
-        when(repository.existsByEmail(anyString())).thenReturn(true);
+    void createCustomerIfNecessary_ShouldCreateNewCustomer() {
+        User savedUser = User.builder()
+                .email("diegopriess.dev@gmail.com")
+                .password("encodedPassword")
+                .role(RoleName.ROLE_CUSTOMER)
+                .deleted(0)
+                .build();
+        savedUser.setId(1L);
 
-        assertThrows(BusinessException.class, () -> userService.create(userRequest));
+        when(userRepository.findByEmail("diegopriess.dev@gmail.com")).thenReturn(Optional.empty());
+        when(securityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+        when(mailService.createWelcomeEmail(anyString(), anyString())).thenReturn("Welcome email content");
+
+        User result = userService.createCustomerIfNecessary("diegopriess.dev@gmail.com");
+
+        assertNotNull(result);
+        assertEquals("diegopriess.dev@gmail.com", result.getEmail());
+        verify(userRepository).save(any(User.class));
+        verify(mailService).sendHtml(eq("diegopriess.dev@gmail.com"), eq("Bem-vindo ao itelectric!!!"), eq("Welcome email content"));
+    }
+
+
+    @Test
+    void create_ShouldThrowExceptionWhenEmailExists() {
+        UserRequest request = new UserRequest();
+        request.setEmail("diegopriess.dev@gmail.com");
+
+        when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
+
+        Exception exception = assertThrows(BusinessException.class, () -> userService.create(request));
+        assertEquals("O e-mail informado já está em uso", exception.getMessage());
     }
 
     @Test
-    void updateUserSuccess() {
-        Long userId = 1L;
-        UserRequest userRequest = new UserRequest("John Doe", "newemail@test.com", "newpassword", RoleName.ROLE_CUSTOMER);
-        User existingUser = new User();
+    void update_ShouldUpdateUserDetails() {
+        UserRequest request = new UserRequest();
+        request.setEmail("newemail@gmail.com");
+        request.setName("New Name");
 
-        when(repository.findById(userId)).thenReturn(Optional.of(existingUser));
-        when(securityConfiguration.passwordEncoder().encode(anyString())).thenReturn("encodedPassword");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        userService.update(userId, userRequest);
+        userService.update(1L, request);
 
-        verify(repository, times(1)).save(existingUser);
+        assertEquals("newemail@gmail.com", user.getEmail());
+        assertEquals("New Name", user.getName());
+        verify(userRepository).save(user);
     }
 
     @Test
-    void updateUserNotFound() {
-        Long userId = 1L;
-        UserRequest userRequest = new UserRequest("John Doe", "email@test.com", "password", RoleName.ROLE_CUSTOMER);
-        when(repository.findById(userId)).thenReturn(Optional.empty());
+    void delete_ShouldMarkUserAsDeleted() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        assertThrows(BusinessException.class, () -> userService.update(userId, userRequest));
+        userService.delete(1L);
+
+        assertEquals(1, user.getDeleted());
+        verify(userRepository).save(user);
     }
 
     @Test
-    void deleteUserSuccess() {
-        Long userId = 1L;
-        User existingUser = new User();
-        existingUser.setDeleted(0);
+    void delete_ShouldThrowExceptionIfUserAlreadyDeleted() {
+        user.setDeleted(1);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        when(repository.findById(userId)).thenReturn(Optional.of(existingUser));
-
-        userService.delete(userId);
-
-        verify(repository, times(1)).save(existingUser);
-        assertEquals(1, existingUser.getDeleted());
+        Exception exception = assertThrows(BusinessException.class, () -> userService.delete(1L));
+        assertEquals("Usuário já está desativado", exception.getMessage());
     }
 
     @Test
-    void deleteUserAlreadyDeleted() {
-        Long userId = 1L;
-        User existingUser = new User();
-        existingUser.setDeleted(1);
+    void list_ShouldReturnFilteredUsersByRole() {
+        Page<User> usersPage = new PageImpl<>(Collections.singletonList(user));
+        Pageable pageable = PageRequest.of(0, 5);
 
-        when(repository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByRole(RoleName.ROLE_CUSTOMER, pageable)).thenReturn(usersPage);
 
-        assertThrows(BusinessException.class, () -> userService.delete(userId));
+        Page<UserResponse> result = userService.list(RoleName.ROLE_CUSTOMER, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(userRepository).findByRole(RoleName.ROLE_CUSTOMER, pageable);
     }
-
-    @Test
-    void getByIdUserNotFound() {
-        Long userId = 1L;
-        when(repository.findById(userId)).thenReturn(Optional.empty());
-
-        assertThrows(BusinessException.class, () -> userService.getById(userId));
-    }
-
 }

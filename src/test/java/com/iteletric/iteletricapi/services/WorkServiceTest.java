@@ -7,19 +7,22 @@ import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class WorkServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class WorkServiceTest {
 
     @Mock
     private WorkRepository workRepository;
@@ -27,118 +30,135 @@ class WorkServiceTest {
     @Mock
     private MaterialService materialService;
 
+    @Mock
+    private UserService userService;
+
     @InjectMocks
     private WorkService workService;
 
+    private Work work;
+    private Material material;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        material = new Material();
+        material.setId(1L);
+        material.setName("Fio");
+
+        work = new Work();
+        work.setId(1L);
+        work.setName("Instalação");
+        work.setPrice(BigDecimal.valueOf(100.00));
+        work.setMaterialList(Collections.singletonList(material));
     }
 
     @Test
-    void testCreateWork() {
-        WorkRequest workRequest = new WorkRequest("Trabalho 1", new BigDecimal("100.0"), Arrays.asList(1L, 2L));
-        List<Material> materialList = Arrays.asList(new Material(), new Material());
+    void create_ShouldCreateWorkSuccessfully() {
+        WorkRequest request = new WorkRequest();
+        request.setName("Fio 2");
+        request.setPrice(BigDecimal.valueOf(150.00));
+        request.setMaterialIdList(List.of(1L));
 
-        when(materialService.getAllMaterialSelectedById(anyList())).thenReturn(materialList);
-        when(workRepository.save(any(Work.class))).thenReturn(new Work());
+        when(materialService.getAllMaterialSelectedById(request.getMaterialIdList())).thenReturn(Collections.singletonList(material));
 
-        Work createdWork = workService.create(workRequest);
+        workService.create(request);
 
-        assertNotNull(createdWork);
-        verify(materialService, times(1)).getAllMaterialSelectedById(workRequest.getMaterialIdList());
-        verify(workRepository, times(1)).save(any(Work.class));
+        verify(workRepository).save(any(Work.class));
     }
 
     @Test
-    void testUpdateWork() {
-        Long workId = 1L;
-        WorkRequest workRequest = new WorkRequest("Trabalho Atualizado", new BigDecimal("200.0"), Arrays.asList(1L, 2L));
-        Work work = new Work();
-        List<Material> materialList = Arrays.asList(new Material(), new Material());
+    void create_ShouldThrowExceptionWhenNoMaterials() {
+        WorkRequest request = new WorkRequest();
+        request.setName("Fio");
+        request.setPrice(BigDecimal.valueOf(150.00));
+        request.setMaterialIdList(List.of());
 
-        when(workRepository.findById(workId)).thenReturn(Optional.of(work));
-        when(materialService.getAllMaterialSelectedById(anyList())).thenReturn(materialList);
-        when(workRepository.save(any(Work.class))).thenReturn(work);
-
-        Work updatedWork = workService.update(workId, workRequest);
-
-        assertNotNull(updatedWork);
-        assertEquals(workRequest.getName(), updatedWork.getName());
-        verify(workRepository, times(1)).findById(workId);
-        verify(workRepository, times(1)).save(any(Work.class));
+        Exception exception = assertThrows(BusinessException.class, () -> workService.create(request));
+        assertEquals("Para criar um trabalho, é necessário selecionar pelo menos um material", exception.getMessage());
     }
 
     @Test
-    void testDeleteWork() {
-        Long workId = 1L;
-        Work work = new Work();
+    void update_ShouldUpdateWorkSuccessfully() {
+        WorkRequest request = new WorkRequest();
+        request.setName("Cabo elétrico");
+        request.setPrice(BigDecimal.valueOf(200.00));
+        request.setMaterialIdList(List.of(1L));
 
-        when(workRepository.findById(workId)).thenReturn(Optional.of(work));
-        doNothing().when(workRepository).delete(work);
+        when(workRepository.findById(1L)).thenReturn(Optional.of(work));
+        when(materialService.getAllMaterialSelectedById(request.getMaterialIdList())).thenReturn(Collections.singletonList(material));
 
-        workService.delete(workId);
+        workService.update(1L, request);
 
-        verify(workRepository, times(1)).findById(workId);
-        verify(workRepository, times(1)).delete(work);
+        assertEquals("Cabo elétrico", work.getName());
+        assertEquals(BigDecimal.valueOf(200.00), work.getPrice());
+        verify(workRepository).save(work);
     }
 
     @Test
-    void testDeleteWork_NotFound() {
-        Long workId = 1L;
+    void update_ShouldThrowExceptionWhenNoMaterials() {
+        WorkRequest request = new WorkRequest();
+        request.setMaterialIdList(List.of());
 
-        when(workRepository.findById(workId)).thenReturn(Optional.empty());
+        lenient().when(workRepository.findById(1L)).thenReturn(Optional.of(work));
 
-        BusinessException exception = assertThrows(BusinessException.class, () -> workService.delete(workId));
+        Exception exception = assertThrows(BusinessException.class, () -> workService.update(1L, request));
+        assertEquals("Para alterar um trabalho, é necessário manter pelo menos um material", exception.getMessage());
+    }
+
+
+    @Test
+    void delete_ShouldDeleteWork() {
+        when(workRepository.findById(1L)).thenReturn(Optional.of(work));
+
+        workService.delete(1L);
+
+        verify(workRepository).delete(work);
+    }
+
+    @Test
+    void delete_ShouldThrowExceptionWhenWorkNotFound() {
+        when(workRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(BusinessException.class, () -> workService.delete(1L));
         assertEquals("Serviço não encontrado", exception.getMessage());
     }
 
     @Test
-    void testGetWorkById() {
-        Long workId = 1L;
-        Work work = new Work();
+    void getById_ShouldReturnWork() {
+        when(workRepository.findById(1L)).thenReturn(Optional.of(work));
 
-        when(workRepository.findById(workId)).thenReturn(Optional.of(work));
+        Work result = workService.getById(1L);
 
-        Work foundWork = workService.getById(workId);
-
-        assertNotNull(foundWork);
-        verify(workRepository, times(1)).findById(workId);
+        assertNotNull(result);
+        assertEquals("Instalação", result.getName());
     }
 
     @Test
-    void testGetWorkById_NotFound() {
-        Long workId = 1L;
+    void getById_ShouldThrowExceptionIfNotFound() {
+        when(workRepository.findById(1L)).thenReturn(Optional.empty());
 
-        when(workRepository.findById(workId)).thenReturn(Optional.empty());
-
-        BusinessException exception = assertThrows(BusinessException.class, () -> workService.getById(workId));
+        Exception exception = assertThrows(BusinessException.class, () -> workService.getById(1L));
         assertEquals("Serviço não encontrado", exception.getMessage());
     }
 
     @Test
-    void testGetAllWorkSelectedById() {
-        List<Long> workIdList = Arrays.asList(1L, 2L);
-        Work work1 = new Work();
-        Work work2 = new Work();
-        List<Work> workList = Arrays.asList(work1, work2);
+    void getAllWorkSelectedById_ShouldReturnWorks() {
+        List<Long> ids = Arrays.asList(1L, 2L);
+        when(workRepository.findAllById(ids)).thenReturn(Arrays.asList(work, new Work()));
 
-        when(workRepository.findAllById(workIdList)).thenReturn(workList);
-
-        List<Work> result = workService.getAllWorkSelectedById(workIdList);
+        List<Work> result = workService.getAllWorkSelectedById(ids);
 
         assertNotNull(result);
         assertEquals(2, result.size());
-        verify(workRepository, times(1)).findAllById(workIdList);
     }
 
     @Test
-    void testGetAllWorkSelectedById_NotFound() {
-        List<Long> workIdList = Arrays.asList(1L, 2L);
+    void getAllWorkSelectedById_ShouldThrowExceptionWhenEmpty() {
+        List<Long> ids = List.of(3L);
+        when(workRepository.findAllById(ids)).thenReturn(List.of());
 
-        when(workRepository.findAllById(workIdList)).thenReturn(List.of());
-
-        BusinessException exception = assertThrows(BusinessException.class, () -> workService.getAllWorkSelectedById(workIdList));
+        Exception exception = assertThrows(BusinessException.class, () -> workService.getAllWorkSelectedById(ids));
         assertEquals("Os serviços selecionados não foram encontrados", exception.getMessage());
     }
+
 }
