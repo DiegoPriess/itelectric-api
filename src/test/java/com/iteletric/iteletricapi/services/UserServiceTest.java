@@ -185,4 +185,41 @@ public class UserServiceTest {
         assertEquals(1, result.getTotalElements());
         verify(userRepository).findByRole(RoleName.ROLE_CUSTOMER, pageable);
     }
+
+    @Test
+    void generatePassword_ShouldReturnValidPassword() {
+        String password = UserService.generatePassword();
+
+        assertNotNull(password);
+        assertEquals(6, password.length());
+        assertTrue(password.matches(".*[A-Za-z0-9!@#$%^&*()\\-_+=<>?].*"));
+    }
+
+    @Test
+    void getUserById_ShouldReturnUser() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        User result = userService.getUserById(1L);
+
+        assertNotNull(result);
+        assertEquals("diegopriess.dev@gmail.com", result.getEmail());
+    }
+
+    @Test
+    void getById_ShouldReturnUserResponse() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        UserResponse response = userService.getById(1L);
+
+        assertNotNull(response);
+        assertEquals("diegopriess.dev@gmail.com", response.getEmail());
+    }
+
+    @Test
+    void getById_ShouldThrowExceptionWhenUserNotFound() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(BusinessException.class, () -> userService.getById(1L));
+        assertEquals("Usuário não encontrado", exception.getMessage());
+    }
 }
