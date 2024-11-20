@@ -149,6 +149,9 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
+                            <includes>
+                                <include>com/iteletric/iteletricapi/services/**</include>
+                            </includes>
                             <formats>
                                 <format>XML</format>
                             </formats>
@@ -156,6 +159,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
