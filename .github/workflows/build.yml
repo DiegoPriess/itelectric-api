@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Spring Boot Application
+name: Analysis and Deploy
 
 on:
   push:
