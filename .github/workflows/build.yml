@@ -44,7 +44,7 @@ jobs:
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=DiegoPriess_iteletric-api -Dsonar.sources=src/main/java/com/iteletric/iteletricapi/services
 
   deploy:
-    name: Deploy Spring Boot Application to AWS Lightsail
+    name: Deploy AWS
     runs-on: ubuntu-latest
     needs: sonarcloud
 
