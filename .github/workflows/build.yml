@@ -68,7 +68,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           source: "target/*.jar"
-          target: "/application/target"
+          target: "/home/ec2-user/application/target"
 
       - name: Restart application
         uses: appleboy/ssh-action@master
