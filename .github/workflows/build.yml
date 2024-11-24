@@ -68,7 +68,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           source: "target/*.jar"
-          target: "/home/ec2-user/application"
+          target: "/application/target"
 
       - name: Restart application
         uses: appleboy/ssh-action@master
@@ -78,5 +78,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            sudo systemctl stop itelectric-api
-            sudo systemctl start itelectric-api
+            sudo systemctl stop iteletric-api-0.0.1-SNAPSHOT.jar
+            sudo systemctl start iteletric-api-0.0.1-SNAPSHOT.jar
