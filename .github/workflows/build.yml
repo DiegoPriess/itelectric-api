@@ -78,5 +78,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            sudo systemctl stop my-spring-app
-            sudo systemctl start my-spring-app
+            sudo systemctl stop itelectric-api
+            sudo systemctl start itelectric-api
