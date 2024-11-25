@@ -8,8 +8,8 @@
         <version>3.2.5</version>
         <relativePath/>
     </parent>
-    <groupId>com.itelectric</groupId>
-    <artifactId>itelectric-api</artifactId>
+    <groupId>com.iteletric</groupId>
+    <artifactId>iteletric-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>iteletric-api</name>
     <description>Se trata de um sistema de gerenciamento para empresas do setor elétrico.</description>
