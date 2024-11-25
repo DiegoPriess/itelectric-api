@@ -1,4 +1,4 @@
-FROM maven:3.9.4-eclipse-temurin-17-alpine AS builder
+FROM maven:3.9.4-amazoncorretto:21-alpine AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline
 COPY src ./src
 RUN mvn package -DskipTests
 
-FROM FROM amazoncorretto:21-alpine
+FROM amazoncorretto:21-alpine
 WORKDIR /app
 
 COPY --from=builder /app/target/iteletric-api-0.0.1-SNAPSHOT.jar /app/app.jar
