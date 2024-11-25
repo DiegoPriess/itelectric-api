@@ -1,12 +1,13 @@
-FROM maven:3.9.4-amazoncorretto:21-alpine AS builder
+FROM maven:3.9.4-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -B
 
 COPY src ./src
-RUN mvn package -DskipTests
+
+RUN mvn clean package -DskipTests
 
 FROM amazoncorretto:21-alpine
 WORKDIR /app
