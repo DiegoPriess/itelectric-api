@@ -48,10 +48,10 @@ public class JwtTokenService {
     }
 
     private Instant creationDate() {
-        return LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().toInstant(ZoneOffset.UTC);
     }
 
     private Instant expirationDate() {
-        return LocalDateTime.now(ZoneOffset.UTC).plusHours(2).toInstant(ZoneOffset.UTC);
+        return LocalDateTime.now(ZoneOffset.UTC).plusHours(24).toInstant(ZoneOffset.UTC);
     }
 }
