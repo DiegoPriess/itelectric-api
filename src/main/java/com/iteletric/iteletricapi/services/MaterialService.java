@@ -6,6 +6,7 @@ import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.MaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +48,11 @@ public class MaterialService {
         Material material = repository.findById(materialId)
                                       .orElseThrow(() -> new BusinessException("Material não encontrado"));
 
-        repository.delete(material);
+        try {
+            repository.delete(material);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException("Não foi possível excluir o material, pois ele está associado a um trabalho existente!");
+        }
     }
 
     public MaterialResponse getById(Long materialId) {

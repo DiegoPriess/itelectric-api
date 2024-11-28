@@ -8,6 +8,7 @@ import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,7 +61,11 @@ public class WorkService {
         Work work = repository.findById(workId)
                               .orElseThrow(() -> new BusinessException("Serviço não encontrado"));
 
-        repository.delete(work);
+        try {
+            repository.delete(work);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException("Não foi possível excluir trabalho, pois ele está associado a um orçamento!");
+        }
     }
 
     public Work getById(Long workId) {
