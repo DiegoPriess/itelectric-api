@@ -44,9 +44,16 @@ public class SecurityConfiguration {
     };
 
     public static final String [] ENDPOINTS_CUSTOMER = {
+            "/budget/customer-list**"
     };
 
-    public static final String [] ENDPOINTS_ELECTRICIAN = {
+    public static final String [] ENDPOINTS_OWNER = {
+            "/material",
+            "/material/**",
+            "/work",
+            "/work/**",
+            "/budget",
+            "/budget/**"
     };
 
     @Bean
@@ -57,7 +64,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
-                        .requestMatchers(ENDPOINTS_ELECTRICIAN).hasRole("OWNER")
+                        .requestMatchers(ENDPOINTS_OWNER).hasRole("OWNER")
                         .requestMatchers(ENDPOINTS_CUSTOMER).hasRole("CUSTOMER")
                         .anyRequest().denyAll()
                 )
