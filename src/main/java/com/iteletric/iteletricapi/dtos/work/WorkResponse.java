@@ -23,7 +23,9 @@ public class WorkResponse {
 
     private String name;
 
-    private BigDecimal price;
+    private BigDecimal laborPrice;
+
+    private BigDecimal materialPrice;
 
     private List<MaterialResponse> materialList;
 
@@ -32,7 +34,8 @@ public class WorkResponse {
                 WorkResponse.builder()
                         .id(work.getId())
                         .name(work.getName())
-                        .price(work.getPrice())
+                        .laborPrice(work.getLaborPrice())
+                        .materialPrice(work.getMaterialPrice())
                         .materialList(
                                 work.getMaterialList().stream().map(material ->
                                         MaterialResponse.builder()
@@ -53,7 +56,8 @@ public class WorkResponse {
                 WorkResponse.builder()
                         .id(work.getId())
                         .name(work.getName())
-                        .price(work.getPrice())
+                        .laborPrice(work.getLaborPrice())
+                        .materialPrice(work.getMaterialPrice())
                         .materialList(
                                 work.getMaterialList().stream().map(material ->
                                         MaterialResponse.builder()

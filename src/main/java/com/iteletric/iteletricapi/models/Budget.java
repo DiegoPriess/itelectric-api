@@ -43,11 +43,8 @@ public class Budget extends BaseModel {
         BigDecimal total = BigDecimal.ZERO;
 
         for (Work work : workList) {
-            BigDecimal workPrice = work.getPrice();
-            total = total.add(workPrice);
-            for (Material material : work.getMaterialList()) {
-                total = total.add(material.getPrice());
-            }
+            BigDecimal workTotalPrice = work.getLaborPrice().add(work.getMaterialPrice());
+            total = total.add(workTotalPrice);
         }
 
         return total;

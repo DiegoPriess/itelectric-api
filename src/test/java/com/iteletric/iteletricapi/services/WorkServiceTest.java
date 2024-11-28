@@ -18,10 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -42,7 +39,6 @@ public class WorkServiceTest {
     private WorkService workService;
 
     private User user;
-
     private Work work;
     private Material material;
 
@@ -56,7 +52,7 @@ public class WorkServiceTest {
         material.setId(1L);
         material.setOwner(user);
 
-        work = Work.builder().name("Instalação").price(BigDecimal.valueOf(100.00)).materialList(Collections.singletonList(material)).build();
+        work = Work.builder().name("Instalação").laborPrice(BigDecimal.valueOf(100.00)).materialList(Collections.singletonList(material)).build();
         work.setId(1L);
     }
 
@@ -64,7 +60,7 @@ public class WorkServiceTest {
     void create_ShouldCreateWorkSuccessfully() {
         WorkRequest request = new WorkRequest();
         request.setName("Fio 2");
-        request.setPrice(BigDecimal.valueOf(150.00));
+        request.setLaborPrice(BigDecimal.valueOf(150.00));
         request.setMaterialIdList(List.of(1L));
 
         when(materialService.getAllMaterialSelectedById(request.getMaterialIdList())).thenReturn(Collections.singletonList(material));
@@ -78,8 +74,8 @@ public class WorkServiceTest {
     void create_ShouldThrowExceptionWhenNoMaterials() {
         WorkRequest request = new WorkRequest();
         request.setName("Fio");
-        request.setPrice(BigDecimal.valueOf(150.00));
-        request.setMaterialIdList(List.of());
+        request.setLaborPrice(BigDecimal.valueOf(150.00));
+        request.setMaterialIdList(Collections.emptyList());
 
         Exception exception = assertThrows(BusinessException.class, () -> workService.create(request));
         assertEquals("Para criar um trabalho, é necessário selecionar pelo menos um material", exception.getMessage());
@@ -89,7 +85,7 @@ public class WorkServiceTest {
     void update_ShouldUpdateWorkSuccessfully() {
         WorkRequest request = new WorkRequest();
         request.setName("Cabo elétrico");
-        request.setPrice(BigDecimal.valueOf(200.00));
+        request.setLaborPrice(BigDecimal.valueOf(200.00));
         request.setMaterialIdList(List.of(1L));
 
         when(workRepository.findById(1L)).thenReturn(Optional.of(work));
@@ -98,21 +94,20 @@ public class WorkServiceTest {
         workService.update(1L, request);
 
         assertEquals("Cabo elétrico", work.getName());
-        assertEquals(BigDecimal.valueOf(200.00), work.getPrice());
+        assertEquals(BigDecimal.valueOf(200.00), work.getLaborPrice());
         verify(workRepository).save(work);
     }
 
     @Test
     void update_ShouldThrowExceptionWhenNoMaterials() {
         WorkRequest request = new WorkRequest();
-        request.setMaterialIdList(List.of());
+        request.setMaterialIdList(Collections.emptyList());
 
         lenient().when(workRepository.findById(1L)).thenReturn(Optional.of(work));
 
         Exception exception = assertThrows(BusinessException.class, () -> workService.update(1L, request));
         assertEquals("Para alterar um trabalho, é necessário manter pelo menos um material", exception.getMessage());
     }
-
 
     @Test
     void delete_ShouldDeleteWork() {
@@ -163,7 +158,7 @@ public class WorkServiceTest {
     @Test
     void getAllWorkSelectedById_ShouldThrowExceptionWhenEmpty() {
         List<Long> ids = List.of(3L);
-        when(workRepository.findAllById(ids)).thenReturn(List.of());
+        when(workRepository.findAllById(ids)).thenReturn(Collections.emptyList());
 
         Exception exception = assertThrows(BusinessException.class, () -> workService.getAllWorkSelectedById(ids));
         assertEquals("Os serviços selecionados não foram encontrados", exception.getMessage());
@@ -171,7 +166,7 @@ public class WorkServiceTest {
 
     @Test
     void list_ShouldReturnWorkWithNameFilter() {
-        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "id")); // Ordenação explícita.
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "id"));
         User currentUser = user;
 
         Page<Work> workPage = new PageImpl<>(Collections.singletonList(work));
@@ -186,7 +181,6 @@ public class WorkServiceTest {
         assertEquals("Instalação", result.getContent().get(0).getName());
         verify(workRepository).findByOwnerAndNameContainingIgnoreCase(currentUser, "Instalação", pageable);
     }
-
 
     @Test
     void list_ShouldReturnAllWorkWithoutNameFilter() {
@@ -208,7 +202,7 @@ public class WorkServiceTest {
     void update_ShouldThrowExceptionWhenWorkNotFound() {
         WorkRequest request = new WorkRequest();
         request.setName("Cabo elétrico");
-        request.setPrice(BigDecimal.valueOf(200.00));
+        request.setLaborPrice(BigDecimal.valueOf(200.00));
         request.setMaterialIdList(List.of(1L));
 
         when(workRepository.findById(1L)).thenReturn(Optional.empty());
@@ -229,7 +223,7 @@ public class WorkServiceTest {
     @Test
     void update_ShouldUpdatePriceOnly() {
         WorkRequest request = new WorkRequest();
-        request.setPrice(BigDecimal.valueOf(250.00));
+        request.setLaborPrice(BigDecimal.valueOf(250.00));
         request.setMaterialIdList(List.of(1L));
 
         when(workRepository.findById(1L)).thenReturn(Optional.of(work));
@@ -237,7 +231,7 @@ public class WorkServiceTest {
 
         workService.update(1L, request);
 
-        assertEquals(BigDecimal.valueOf(250.00), work.getPrice());
+        assertEquals(BigDecimal.valueOf(250.00), work.getLaborPrice());
         verify(workRepository).save(work);
     }
 

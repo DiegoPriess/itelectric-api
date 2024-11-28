@@ -37,7 +37,7 @@ public class WorkService {
 
         Work work = new Work();
         work.setName(workRequest.getName());
-        work.setPrice(workRequest.getPrice());
+        work.setLaborPrice(workRequest.getLaborPrice());
         work.setMaterialList(materialList);
 
         return repository.save(work);
@@ -50,7 +50,7 @@ public class WorkService {
         List<Material> materialList = materialService.getAllMaterialSelectedById(workRequest.getMaterialIdList());
 
         work.setName(workRequest.getName());
-        work.setPrice(workRequest.getPrice());
+        work.setLaborPrice(workRequest.getLaborPrice());
         work.setMaterialList(materialList);
 
         return repository.save(work);

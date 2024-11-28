@@ -19,7 +19,7 @@ public class WorkRequest {
     @OptionalNotBlank(groups = ValidationGroups.PUT.class, message = "O nome não pode ser vazio!")
     private String name;
 
-    private BigDecimal price;
+    private BigDecimal laborPrice;
 
     private List<Long> materialIdList;
 }
