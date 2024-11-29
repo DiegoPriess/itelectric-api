@@ -8,7 +8,7 @@ Este software tem como objetivo desenvolver uma ferramenta que auxilie eletricis
 - Aumento da produtividade: Automatização de tarefas repetitivas e redução do tempo gasto na elaboração de orçamentos.
 - Melhora na organização: Centralização de informações e fácil acesso aos dados de cada projeto.
 - Redução de erros: Padronização de processos e minimização de riscos de erros manuais.
-- Satisfação do cliente: Agilidade na entrega de orçamentos e acompanhamento transparente do projeto através de envio de emails."
+- Satisfação do cliente: Agilidade na entrega de orçamentos e acompanhamento transparente do projeto através de envio de emails.
 
 ## Boas práticas de desenvolvimento aplicadas
 - **Handler de Erros**: Implementação de um handler de erros para tratar todas as exceções geradas pela API e retornar mensagens amigáveis e padronizadas. Isso melhora a experiência do usuário e facilita a identificação e resolução de problemas.
@@ -18,10 +18,9 @@ Este software tem como objetivo desenvolver uma ferramenta que auxilie eletricis
 - **Autenticação com Token JWT**: Implementação de autenticação utilizando token JWT para garantir que apenas usuários autenticados possam acessar as funcionalidades protegidas da aplicação. O sistema valida e gerencia os tokens de forma segura para cada requisição.
 - **Permissões de Rotas com Base nas Credenciais de Usuário**: As permissões de acesso às rotas são controladas com base nas credenciais do usuário, permitindo que apenas usuários com as permissões adequadas possam acessar determinadas funcionalidades do sistema. As rotas são protegidas e adaptadas de acordo com o perfil do usuário (ex: eletricista, cliente).
 
-Esse é o BACK-END do projeto, que também conta com um front-end disponíveL no repositório:
-- [FRONT-END](https://github.com/DiegoPriess/itelectric-app)
+Esse é o BACK-END do projeto, que também conta com um front-end disponíveL no repositório: [FRONT-END](https://github.com/DiegoPriess/itelectric-app)
 
-## [Jira](https://diegopriessdev.atlassian.net/jira/software/projects/KAN/boards/1)
+### Dashboard Kanban [Jira](https://diegopriessdev.atlassian.net/jira/software/projects/KAN/boards/1)
 
 ## Arquitetura C4
 - [NV.1](https://drive.google.com/file/d/1cjtWxbsxG7hVC8DEFkOR6WQd6ZeGkPWz/view?usp=sharing)
