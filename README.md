@@ -58,7 +58,7 @@ Esse é o BACK-END do projeto, que também conta com um front-end disponíveL no
 - **Testes:** JUnit/Mockito
 - **Deploy:** AWS
 - **Qualidade:** [SonarCloud](https://sonarcloud.io/project/overview?id=DiegoPriess_iteletric-api)
-- **Monitoramento** Datadog
+- **Monitoramento** [Datadog](https://app.datadoghq.com/dashboard/ivz-3u3-cdk/api?fromUser=false&refresh_mode=sliding&from_ts=1732843123031&to_ts=1732846723031&live=true)
 
 ## Contato
 - Autor: Diego Priess
