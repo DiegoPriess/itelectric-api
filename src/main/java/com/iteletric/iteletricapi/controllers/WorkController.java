@@ -25,15 +25,15 @@ public class WorkController {
     }
 
     @PostMapping
-    public ResponseEntity<Work> create(@RequestBody @Validated(ValidationGroups.POST.class) WorkRequest workRequest) {
-        Work createdWork = service.create(workRequest);
-        return new ResponseEntity<>(createdWork, HttpStatus.CREATED);
+    public ResponseEntity<Void> create(@RequestBody @Validated(ValidationGroups.POST.class) WorkRequest workRequest) {
+        service.create(workRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{workId}")
-    public ResponseEntity<Work> update(@PathVariable Long workId, @RequestBody @Validated(ValidationGroups.PUT.class) WorkRequest workRequest) {
-        Work updatedWork = service.update(workId, workRequest);
-        return new ResponseEntity<>(updatedWork, HttpStatus.OK);
+    public ResponseEntity<Void> update(@PathVariable Long workId, @RequestBody @Validated(ValidationGroups.PUT.class) WorkRequest workRequest) {
+        service.update(workId, workRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{workId}")

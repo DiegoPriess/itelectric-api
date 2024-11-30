@@ -3,9 +3,11 @@ package com.iteletric.iteletricapi.services;
 import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.dtos.work.WorkRequest;
 import com.iteletric.iteletricapi.dtos.work.WorkResponse;
+import com.iteletric.iteletricapi.models.Budget;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.models.Work;
+import com.iteletric.iteletricapi.repositories.BudgetRepository;
 import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,25 +17,26 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class WorkService {
 
     private final WorkRepository repository;
+    private final BudgetRepository budgetRepository;
     private final MaterialService materialService;
     private final UserService userService;
 
     @Autowired
-    public WorkService(WorkRepository repository, MaterialService materialService, UserService userService) {
+    public WorkService(WorkRepository repository, MaterialService materialService, UserService userService, BudgetRepository budgetRepository) {
         this.repository = repository;
         this.materialService = materialService;
         this.userService = userService;
+        this.budgetRepository = budgetRepository;
     }
 
-    public Work create(WorkRequest workRequest) {
-        if (workRequest.getMaterialIdList().isEmpty()) throw new BusinessException("Para criar um trabalho, é necessário selecionar pelo menos um material");
-
+    public void create(WorkRequest workRequest) {
         List<Material> materialList = materialService.getAllMaterialSelectedById(workRequest.getMaterialIdList());
 
         Work work = new Work();
@@ -41,20 +44,19 @@ public class WorkService {
         work.setLaborPrice(workRequest.getLaborPrice());
         work.setMaterialList(materialList);
 
-        return repository.save(work);
+        repository.save(work);
     }
 
-    public Work update(Long workId, WorkRequest workRequest) {
-        if (workRequest.getMaterialIdList().isEmpty()) throw new BusinessException("Para alterar um trabalho, é necessário manter pelo menos um material");
-
+    public void update(Long workId, WorkRequest workRequest) {
         Work work = getById(workId);
         List<Material> materialList = materialService.getAllMaterialSelectedById(workRequest.getMaterialIdList());
 
         work.setName(workRequest.getName());
         work.setLaborPrice(workRequest.getLaborPrice());
         work.setMaterialList(materialList);
+        repository.save(work);
 
-        return repository.save(work);
+        recalculateBudgetTotalValue(work);
     }
 
     public void delete(Long workId) {
@@ -90,5 +92,16 @@ public class WorkService {
         List<Work> workList = repository.findAllById(workIdList);
         if (workList.isEmpty()) throw new BusinessException("Os serviços selecionados não foram encontrados");
         return workList;
+    }
+
+    private void recalculateBudgetTotalValue(Work work) {
+        List<Budget> budgetsList = budgetRepository.findByWorkListContaining(work);
+        if (budgetsList.isEmpty()) return;
+
+        for(Budget budget: budgetsList) {
+            BigDecimal newTotalValue = budget.calculateTotalValue();
+            budget.setTotalValue(newTotalValue);
+            budgetRepository.save(budget);
+        }
     }
 }

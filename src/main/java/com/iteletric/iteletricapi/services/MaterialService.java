@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -75,9 +76,8 @@ public class MaterialService {
         return MaterialResponse.convert(repository.findByOwner(currentUser, sortedPageable));
     }
 
-    public List<Material> getAllMaterialSelectedById(List<Long> workIdList) {
-        List<Material> materialList = repository.findAllById(workIdList);
-        if (materialList.isEmpty()) throw new BusinessException("Os materiais selecionados não foram encontrados");
-        return materialList;
+    public List<Material> getAllMaterialSelectedById(List<Long> materialIdList) {
+        if (materialIdList.isEmpty()) return new ArrayList<>();
+        return repository.findAllById(materialIdList);
     }
 }
