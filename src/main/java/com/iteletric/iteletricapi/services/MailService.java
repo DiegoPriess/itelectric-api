@@ -54,7 +54,7 @@ public class MailService {
                                 <li><strong>Email:</strong> %s</li>
                                 <li><strong>Senha:</strong> %s</li>
                             </ul>
-                            <p style="margin-top: 20px;">Clique <a href="https://www.itelectric.com/entrar" style="color: #4CAF50;">aqui</a> para acessar o sistema.</p>
+                            <p style="margin-top: 20px;">Clique <a href="http://54.210.117.106/entrar" style="color: #4CAF50;">aqui</a> para acessar o sistema.</p>
                             <p>Atenciosamente,</p>
                             <p><strong>Equipe ITElectric</strong></p>
                         </div>
@@ -77,7 +77,7 @@ public class MailService {
                             <p>Você tem um novo orçamento disponível em sua conta no ITElectric!</p>
                             <p>Para visualizar os detalhes do orçamento, clique no botão abaixo:</p>
                             <div style="text-align: center; margin-top: 20px;">
-                                <a href="https://www.itelectric.com/entrar" style="background-color: #20494d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+                                <a href="http://54.210.117.106/entrar" style="background-color: #20494d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
                                     Ver Orçamento
                                 </a>
                             </div>
