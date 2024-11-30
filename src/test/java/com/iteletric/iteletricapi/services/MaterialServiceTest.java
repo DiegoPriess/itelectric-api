@@ -181,15 +181,10 @@ public class MaterialServiceTest {
     }
 
     @Test
-    void getAllMaterialSelectedById_WithInvalidIds_ShouldThrowException() {
-        List<Long> ids = List.of(3L);
-        when(materialRepository.findAllById(ids)).thenReturn(List.of());
+    void getAllMaterialSelectedById_WithInvalidIds_ShouldReturnEmptyList() {
+        List<Material> materials = materialService.getAllMaterialSelectedById(Collections.singletonList(-1L));
 
-        Exception exception = assertThrows(BusinessException.class, () -> {
-            materialService.getAllMaterialSelectedById(ids);
-        });
-
-        assertEquals("Os materiais selecionados não foram encontrados", exception.getMessage());
-        verify(materialRepository).findAllById(ids);
+        assertTrue(materials.isEmpty(), "A lista de materiais não deveria estar vazia");
     }
+
 }

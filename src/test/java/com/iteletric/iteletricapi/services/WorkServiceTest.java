@@ -8,6 +8,7 @@ import com.iteletric.iteletricapi.enums.user.RoleName;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.models.Work;
+import com.iteletric.iteletricapi.repositories.BudgetRepository;
 import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ public class WorkServiceTest {
 
     @Mock
     private WorkRepository workRepository;
+
+    @Mock
+    private BudgetRepository budgetRepository;
 
     @Mock
     private MaterialService materialService;
@@ -71,14 +75,15 @@ public class WorkServiceTest {
     }
 
     @Test
-    void create_ShouldThrowExceptionWhenNoMaterials() {
+    void create_ShouldCreateWhenNoMaterials() {
         WorkRequest request = new WorkRequest();
         request.setName("Fio");
         request.setLaborPrice(BigDecimal.valueOf(150.00));
         request.setMaterialIdList(Collections.emptyList());
 
-        Exception exception = assertThrows(BusinessException.class, () -> workService.create(request));
-        assertEquals("Para criar um trabalho, é necessário selecionar pelo menos um material", exception.getMessage());
+        when(materialService.getAllMaterialSelectedById(request.getMaterialIdList())).thenReturn(Collections.emptyList());
+        workService.create(request);
+        verify(workRepository).save(any(Work.class));
     }
 
     @Test
@@ -89,24 +94,16 @@ public class WorkServiceTest {
         request.setMaterialIdList(List.of(1L));
 
         when(workRepository.findById(1L)).thenReturn(Optional.of(work));
+
         when(materialService.getAllMaterialSelectedById(request.getMaterialIdList())).thenReturn(Collections.singletonList(material));
 
-        workService.update(1L, request);
+        when(budgetRepository.findByWorkListContaining(work)).thenReturn(Collections.emptyList());
 
+        workService.update(1L, request);
         assertEquals("Cabo elétrico", work.getName());
         assertEquals(BigDecimal.valueOf(200.00), work.getLaborPrice());
+
         verify(workRepository).save(work);
-    }
-
-    @Test
-    void update_ShouldThrowExceptionWhenNoMaterials() {
-        WorkRequest request = new WorkRequest();
-        request.setMaterialIdList(Collections.emptyList());
-
-        lenient().when(workRepository.findById(1L)).thenReturn(Optional.of(work));
-
-        Exception exception = assertThrows(BusinessException.class, () -> workService.update(1L, request));
-        assertEquals("Para alterar um trabalho, é necessário manter pelo menos um material", exception.getMessage());
     }
 
     @Test
