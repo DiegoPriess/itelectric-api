@@ -4,7 +4,9 @@ import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.dtos.material.MaterialResponse;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.models.User;
+import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.repositories.MaterialRepository;
+import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +23,14 @@ import java.util.List;
 public class MaterialService {
 
     @Autowired
-    MaterialService(MaterialRepository repository, UserService userService) {
+    MaterialService(MaterialRepository repository, UserService userService, WorkRepository workRepository) {
         this.repository = repository;
         this.userService = userService;
+        this.workRepository = workRepository;
     }
 
     private final MaterialRepository repository;
+    private final WorkRepository workRepository;
 
     private final UserService userService;
 
@@ -43,6 +48,8 @@ public class MaterialService {
         material.setQuantityUnitMeasure(materialDetails.getQuantityUnitMeasure());
 
         repository.save(material);
+
+        recalculateWorkMaterialValue(material);
     }
 
     public void delete(Long materialId) {
@@ -79,5 +86,16 @@ public class MaterialService {
     public List<Material> getAllMaterialSelectedById(List<Long> materialIdList) {
         if (materialIdList.isEmpty()) return new ArrayList<>();
         return repository.findAllById(materialIdList);
+    }
+
+    private void recalculateWorkMaterialValue(Material material) {
+        List<Work> workList = workRepository.findByMaterialListContaining(material);
+        if (workList.isEmpty()) return;
+
+        for(Work work: workList) {
+            BigDecimal newMaterialPrice = work.calculateMaterialPrice();
+            work.setMaterialPrice(newMaterialPrice);
+            workRepository.save(work);
+        }
     }
 }

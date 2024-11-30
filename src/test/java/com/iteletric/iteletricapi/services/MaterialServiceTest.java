@@ -6,6 +6,7 @@ import com.iteletric.iteletricapi.enums.material.UnitOfMeasure;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.MaterialRepository;
+import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,9 @@ public class MaterialServiceTest {
 
     @Mock
     private MaterialRepository materialRepository;
+
+    @Mock
+    private WorkRepository workRepository;
 
     @Mock
     private UserService userService;
@@ -63,6 +67,8 @@ public class MaterialServiceTest {
     @Test
     void updateMaterial_ShouldUpdateProperties() {
         when(materialRepository.findById(1L)).thenReturn(Optional.of(material));
+        when(workRepository.findByMaterialListContaining(any(Material.class))).thenReturn(Collections.emptyList());
+
         Material updatedDetails = new Material();
         updatedDetails.setName("Fio atualizado");
         updatedDetails.setPrice(BigDecimal.valueOf(15.0));
