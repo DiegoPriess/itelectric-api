@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @Component
 public class UserAuthenticationFilter extends OncePerRequestFilter {
@@ -72,7 +71,20 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean checkIfEndpointIsNotPublic(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        return !Arrays.asList(SecurityConfiguration.ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).contains(requestURI);
+
+        for (String allowedEndpoint : SecurityConfiguration.ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED) {
+            if (requestURI.matches(allowedEndpoint.replace("*", ".*"))) {
+                return false;
+            }
+        }
+
+        for (String swaggerEndpoint : SecurityConfiguration.ENDPOINT_SWAGGER) {
+            if (requestURI.matches(swaggerEndpoint.replace("**", ".*"))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
