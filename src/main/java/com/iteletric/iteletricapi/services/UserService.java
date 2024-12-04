@@ -30,8 +30,9 @@ public class UserService {
 	private final JwtTokenService jwtTokenService;
 	private final UserRepository repository;
 	private final SecurityConfiguration securityConfiguration;
-
 	private final MailService mailService;
+
+	private static final String userNotFoundMessage = "Usuário não encontrado";
 
 	@Autowired
 	UserService(AuthenticationManager authenticationManager,
@@ -77,7 +78,7 @@ public class UserService {
 
 	public void update(Long userId, UserRequest request) {
 		User user = repository.findById(userId)
-						      .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+						      .orElseThrow(() -> new BusinessException(userNotFoundMessage));
 
 		if (request.getName() != null) user.setName(request.getName());
 		if (request.getEmail() != null) user.setEmail(request.getEmail());
@@ -87,7 +88,7 @@ public class UserService {
 	}
 
 	public void delete(Long userId) {
-		User user = repository.findById(userId).orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+		User user = repository.findById(userId).orElseThrow(() -> new BusinessException(userNotFoundMessage));
 		if (user.getDeleted() == 1) throw new BusinessException("Usuário já está desativado");
 
 		user.setDeleted(1);
@@ -96,12 +97,12 @@ public class UserService {
 
 	public UserResponse getById(Long userId) {
 		User user = repository.findById(userId)
-							  .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+							  .orElseThrow(() -> new BusinessException(userNotFoundMessage));
 		return UserResponse.convert(user);
 	}
 
 	public User getUserById(Long userId) {
-		return repository.findById(userId).orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+		return repository.findById(userId).orElseThrow(() -> new BusinessException(userNotFoundMessage));
 	}
 
 	public Page<UserResponse> list(RoleName role, Pageable pageable) {

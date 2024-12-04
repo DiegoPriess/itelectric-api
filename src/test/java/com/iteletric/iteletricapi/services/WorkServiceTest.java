@@ -120,7 +120,7 @@ public class WorkServiceTest {
         when(workRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(BusinessException.class, () -> workService.delete(1L));
-        assertEquals("Serviço não encontrado", exception.getMessage());
+        assertEquals("Trabalho não encontrado", exception.getMessage());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class WorkServiceTest {
         when(workRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(BusinessException.class, () -> workService.getById(1L));
-        assertEquals("Serviço não encontrado", exception.getMessage());
+        assertEquals("Trabalho não encontrado", exception.getMessage());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class WorkServiceTest {
         when(workRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(BusinessException.class, () -> workService.update(1L, request));
-        assertEquals("Serviço não encontrado", exception.getMessage());
+        assertEquals("Trabalho não encontrado", exception.getMessage());
     }
 
     @Test
@@ -235,6 +235,6 @@ public class WorkServiceTest {
     @Test
     void getById_ShouldThrowExceptionForNullId() {
         Exception exception = assertThrows(BusinessException.class, () -> workService.getById(null));
-        assertEquals("Serviço não encontrado", exception.getMessage());
+        assertEquals("Trabalho não encontrado", exception.getMessage());
     }
 }

@@ -28,6 +28,8 @@ public class WorkService {
     private final MaterialService materialService;
     private final UserService userService;
 
+    private static final String workNotFoundMessage = "Trabalho não encontrado";
+
     @Autowired
     public WorkService(WorkRepository repository, MaterialService materialService, UserService userService, BudgetRepository budgetRepository) {
         this.repository = repository;
@@ -61,7 +63,7 @@ public class WorkService {
 
     public void delete(Long workId) {
         Work work = repository.findById(workId)
-                              .orElseThrow(() -> new BusinessException("Serviço não encontrado"));
+                              .orElseThrow(() -> new BusinessException(workNotFoundMessage));
 
         try {
             repository.delete(work);
@@ -72,7 +74,7 @@ public class WorkService {
 
     public Work getById(Long workId) {
         return repository.findById(workId)
-                         .orElseThrow(() -> new BusinessException("Serviço não encontrado"));
+                         .orElseThrow(() -> new BusinessException(workNotFoundMessage));
     }
 
     public Page<WorkResponse> list(String name, Pageable pageable) {

@@ -3,6 +3,7 @@ package com.iteletric.iteletricapi.services;
 import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.dtos.budget.BudgetRequest;
 import com.iteletric.iteletricapi.enums.budget.BudgetStatus;
+import com.iteletric.iteletricapi.enums.user.RoleName;
 import com.iteletric.iteletricapi.models.Budget;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.models.Work;
@@ -13,6 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -150,5 +155,70 @@ public class BudgetServiceTest {
             budgetService.deny(1L);
         });
         assertEquals("Orçamento não encontrado", exception.getMessage());
+    }
+
+    @Test
+    void listCustomerBudgets_ShouldReturnCustomerBudgets() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id")); // Adicione o sort correto
+        User currentUser = new User();
+        when(userService.getCurrentUser()).thenReturn(currentUser);
+        when(budgetRepository.findByCustomer(currentUser, pageable)).thenReturn(Page.empty());
+
+        Page<Budget> result = budgetService.customerList(pageable);
+
+        assertEquals(0, result.getTotalElements());
+        verify(budgetRepository).findByCustomer(currentUser, pageable);
+    }
+
+    @Test
+    void listBudgets_ShouldReturnBudgetsFilteredByEmail() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
+        User currentUser = new User();
+        when(userService.getCurrentUser()).thenReturn(currentUser);
+        when(budgetRepository.findByOwnerAndCustomerEmail(currentUser, "diegopriess.dev@gmail.com", pageable))
+                .thenReturn(Page.empty());
+
+        Page<Budget> result = budgetService.list("diegopriess.dev@gmail.com", pageable);
+
+        assertEquals(0, result.getTotalElements());
+        verify(budgetRepository).findByOwnerAndCustomerEmail(currentUser, "diegopriess.dev@gmail.com", pageable);
+    }
+
+
+    @Test
+    void listBudgets_ShouldReturnBudgetsWithoutFilter() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
+        User currentUser = new User();
+        when(userService.getCurrentUser()).thenReturn(currentUser);
+        when(budgetRepository.findByOwner(currentUser, pageable)).thenReturn(Page.empty());
+
+        Page<Budget> result = budgetService.list(null, pageable);
+
+        assertEquals(0, result.getTotalElements());
+        verify(budgetRepository).findByOwner(currentUser, pageable);
+    }
+
+    @Test
+    void createBudget_ShouldThrowExceptionWhenCustomerIsOwner() {
+        User owner = new User();
+        owner.setRole(RoleName.ROLE_OWNER);
+        when(userService.createCustomerIfNecessary(anyString())).thenReturn(owner);
+
+        Exception exception = assertThrows(BusinessException.class, () -> {
+            budgetService.create(budgetRequest);
+        });
+
+        assertEquals("Não é possível criar orçamento para um cliente já cadastrado como eletrecista", exception.getMessage());
+    }
+
+    @Test
+    void updateBudget_ShouldThrowExceptionWhenWorkListIsEmpty() {
+        budgetRequest.setWorkIdList(Collections.emptyList());
+
+        Exception exception = assertThrows(BusinessException.class, () -> {
+            budgetService.update(1L, budgetRequest);
+        });
+
+        assertEquals("Para alterar um orçamento, é necessário manter pelo menos um trabalho", exception.getMessage());
     }
 }
