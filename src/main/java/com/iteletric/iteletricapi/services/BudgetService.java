@@ -3,6 +3,7 @@ package com.iteletric.iteletricapi.services;
 import com.iteletric.iteletricapi.config.exception.BusinessException;
 import com.iteletric.iteletricapi.dtos.budget.BudgetRequest;
 import com.iteletric.iteletricapi.enums.budget.BudgetStatus;
+import com.iteletric.iteletricapi.enums.user.RoleName;
 import com.iteletric.iteletricapi.models.Budget;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.models.Work;
@@ -37,6 +38,9 @@ public class BudgetService {
         if (budgetRequest.getWorkIdList().isEmpty()) throw new BusinessException("Para criar um orçamento, é necessário selecionar pelo menos um trabalho");
 
         User customer = userService.createCustomerIfNecessary(budgetRequest.getCustomerEmail());
+
+        if (RoleName.ROLE_OWNER.equals(customer.getRole())) throw new BusinessException("Não é possível criar orçamento para um cliente já cadastrado como eletrecista");
+
         List<Work> workList = workService.getAllWorkSelectedById(budgetRequest.getWorkIdList());
 
         Budget budget = Budget.builder()

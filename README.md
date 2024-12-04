@@ -22,6 +22,10 @@ Esse é o BACK-END do projeto, que também conta com um front-end disponíveL no
 
 ### Dashboard Kanban [Jira](https://diegopriessdev.atlassian.net/jira/software/projects/KAN/boards/1)
 
+## Caso de uso
+- [Eletrecista](https://drive.google.com/file/d/1l3A0ZCGIcX5V9Y6qvW6wbS0GbVXgzew1/view?usp=drive_link)
+- [Cliente](https://drive.google.com/file/d/1KJFFPJ2lbR7z0IVdrw9nnPSfcZCKsCum/view?usp=drive_link)
+
 ## Arquitetura C4
 - [NV.1](https://drive.google.com/file/d/1cjtWxbsxG7hVC8DEFkOR6WQd6ZeGkPWz/view?usp=sharing)
 - [NV.2](https://drive.google.com/file/d/1IeZX3G9YlAU1yuloMuRd6zc5fc9VUpQw/view?usp=sharing)
