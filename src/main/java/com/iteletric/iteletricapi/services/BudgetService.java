@@ -25,7 +25,7 @@ public class BudgetService {
     private final UserService userService;
     private final MailService mailService;
 
-    private static final String budgetNotFoundMessage = "Orçamento não encontrado";
+    private static final String BUDGET_NOT_FOUND_MESSAGE = "Orçamento não encontrado";
 
     @Autowired
     public BudgetService(BudgetRepository repository, WorkService workService, UserService userService, MailService mailService) {
@@ -72,14 +72,14 @@ public class BudgetService {
 
     public void delete(Long userId) {
         Budget budget = repository.findById(userId)
-                .orElseThrow(() -> new BusinessException(budgetNotFoundMessage));
+                .orElseThrow(() -> new BusinessException(BUDGET_NOT_FOUND_MESSAGE));
 
         repository.delete(budget);
     }
 
     public Budget getById(Long budgetId) {
         return repository.findById(budgetId)
-                .orElseThrow(() -> new BusinessException(budgetNotFoundMessage));
+                .orElseThrow(() -> new BusinessException(BUDGET_NOT_FOUND_MESSAGE));
     }
 
     public Page<Budget> list(String customerEmail, Pageable pageable) {
@@ -108,7 +108,7 @@ public class BudgetService {
 
     public void approve(Long budgetId) {
         Budget budget = repository.findById(budgetId)
-                .orElseThrow(() -> new BusinessException(budgetNotFoundMessage));
+                .orElseThrow(() -> new BusinessException(BUDGET_NOT_FOUND_MESSAGE));
 
         budget.setStatus(BudgetStatus.APPROVED);
         repository.save(budget);
@@ -116,7 +116,7 @@ public class BudgetService {
 
     public void deny(Long budgetId) {
         Budget budget = repository.findById(budgetId)
-                .orElseThrow(() -> new BusinessException(budgetNotFoundMessage));
+                .orElseThrow(() -> new BusinessException(BUDGET_NOT_FOUND_MESSAGE));
 
         budget.setStatus(BudgetStatus.DENIED);
         repository.save(budget);

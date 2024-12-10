@@ -33,7 +33,7 @@ public class MaterialService {
     private final WorkRepository workRepository;
     private final UserService userService;
 
-    private static final String materialNotFoundMessage = "Material não encontrado";
+    private static final String MATERIAL_NOT_FOUND_MESSAGE = "Material não encontrado";
 
     public void create(Material material) {
         repository.save(material);
@@ -41,7 +41,7 @@ public class MaterialService {
 
     public void update(Long materialId, Material materialDetails) {
         Material material = repository.findById(materialId)
-                                      .orElseThrow(() -> new BusinessException(materialNotFoundMessage));
+                                      .orElseThrow(() -> new BusinessException(MATERIAL_NOT_FOUND_MESSAGE));
 
         material.setName(materialDetails.getName());
         material.setPrice(materialDetails.getPrice());
@@ -55,7 +55,7 @@ public class MaterialService {
 
     public void delete(Long materialId) {
         Material material = repository.findById(materialId)
-                                      .orElseThrow(() -> new BusinessException(materialNotFoundMessage));
+                                      .orElseThrow(() -> new BusinessException(MATERIAL_NOT_FOUND_MESSAGE));
 
         try {
             repository.delete(material);
@@ -66,7 +66,7 @@ public class MaterialService {
 
     public MaterialResponse getById(Long materialId) {
         Material material = repository.findById(materialId)
-                                      .orElseThrow(() -> new BusinessException(materialNotFoundMessage));
+                                      .orElseThrow(() -> new BusinessException(MATERIAL_NOT_FOUND_MESSAGE));
 
         return MaterialResponse.convert(material);
     }
