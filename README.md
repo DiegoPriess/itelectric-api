@@ -54,6 +54,45 @@ Esse é o BACK-END do projeto, que também conta com um front-end disponíveL no
 | **RNF.3**     | **Experiência do Usuário**                                                            | O sistema deve oferecer uma experiência de usuário intuitiva e fluida, com interfaces amigáveis e tempos de resposta rápidos.           |
 | **RNF.4**     | **Criptografia bcrypt**                                                                | As senhas dos usuários devem ser criptografadas utilizando o algoritmo bcrypt, garantindo a segurança dos dados sensíveis.              |
 
+## Pipelines
+
+O projeto utiliza uma pipeline automatizada para realizar análise de qualidade, build e deploy contínuo na AWS com Docker. Abaixo estão os detalhes do processo configurado no GitHub Actions:
+
+### 1. **SonarCloud - Análise de Qualidade**
+Responsável por garantir a qualidade do código utilizando o SonarCloud.
+
+- **Etapas**:
+  1. Checkout do repositório.
+  2. Configuração do ambiente com JDK 21.
+  3. Cache de pacotes Maven e SonarCloud para melhorar a performance da pipeline.
+  4. Build e análise do código com o Sonar Maven Plugin.
+  5. Resultados disponíveis no [SonarCloud](https://sonarcloud.io/project/overview?id=DiegoPriess_iteletric-api).
+
+### 2. **Build Docker**
+Responsável por construir a imagem Docker do backend.
+
+- **Etapas**:
+  1. Checkout do repositório.
+  2. Configuração do ambiente com JDK 21.
+  3. Build do projeto Maven, ignorando testes durante essa etapa (`-DskipTests`).
+  4. Login no Docker Hub utilizando credenciais seguras.
+  5. Construção da imagem Docker do backend.
+  6. Publicação da imagem no Docker Hub.
+
+### 3. **Deploy na AWS**
+Responsável por realizar o deploy no servidor AWS na instância EC2.
+
+- **Etapas**:
+  1. Baixar a imagem mais recente do backend do Docker Hub.
+  2. Remover o container existente (se houver).
+  3. Iniciar um novo container Docker com as seguintes configurações:
+     - Expor a aplicação na porta `8080`.
+     - Configurar variáveis de ambiente sensíveis (credenciais do banco, JWT, e-mail).
+  4. Verificar se a aplicação está em execução no servidor.
+
+### Como Funciona
+A pipeline é acionada automaticamente ao realizar merge de algum PR para a MASTER ou ao receber umm push na branch MASTER. Essa configuração garante que o código do projeto esteja sempre analisado, compilado e que a versão mais recente seja publicada automaticamente no servidor de produção.
+
 ## Tecnologias Utilizadas
 - **Linguagem:** Java 21 com Spring Boot
 - **Banco de Dados:** PostgreSQL
