@@ -1,7 +1,6 @@
 package com.iteletric.iteletricapi.dtos.work;
 
 import com.iteletric.iteletricapi.dtos.enums.EnumDTO;
-import com.iteletric.iteletricapi.dtos.material.MaterialResponse;
 import com.iteletric.iteletricapi.models.Work;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -27,7 +25,7 @@ public class WorkResponse {
 
     private BigDecimal materialPrice;
 
-    private List<MaterialResponse> materialList;
+    private List<BulkMaterialResponse> materialList;
 
     public static Page<WorkResponse> convert(Page<Work> workPage) {
         return workPage.map(work ->
@@ -37,13 +35,16 @@ public class WorkResponse {
                         .laborPrice(work.getLaborPrice())
                         .materialPrice(work.getMaterialPrice())
                         .materialList(
-                                work.getMaterialList().stream().map(material ->
-                                        MaterialResponse.builder()
-                                                .id(material.getId())
-                                                .name(material.getName())
-                                                .price(material.getPrice())
-                                                .unitMeasure(new EnumDTO(material.getUnitMeasure().toString(), material.getUnitMeasure().getLabel()))
-                                                .quantityUnitMeasure(material.getQuantityUnitMeasure())
+                                work.getMaterialList().stream().map(workMaterial ->
+                                        BulkMaterialResponse.builder()
+                                                .id(workMaterial.getMaterial().getId())
+                                                .name(workMaterial.getMaterial().getName())
+                                                .price(workMaterial.getPrice())
+                                                .unitMeasure(new EnumDTO(
+                                                        workMaterial.getMaterial().getUnitMeasure().toString(),
+                                                        workMaterial.getMaterial().getUnitMeasure().getLabel()
+                                                ))
+                                                .quantityUnitMeasure(workMaterial.getBulkQuantity())
                                                 .build()
                                 ).toList()
                         )
@@ -59,21 +60,43 @@ public class WorkResponse {
                         .laborPrice(work.getLaborPrice())
                         .materialPrice(work.getMaterialPrice())
                         .materialList(
-                                work.getMaterialList().stream().map(material ->
-                                        MaterialResponse.builder()
-                                                .id(material.getId())
-                                                .name(material.getName())
-                                                .price(material.getPrice())
+                                work.getMaterialList().stream().map(workMaterial ->
+                                        BulkMaterialResponse.builder()
+                                                .id(workMaterial.getMaterial().getId())
+                                                .name(workMaterial.getMaterial().getName())
+                                                .price(workMaterial.getPrice())
                                                 .unitMeasure(new EnumDTO(
-                                                        material.getUnitMeasure().toString(),
-                                                        material.getUnitMeasure().getLabel()
+                                                        workMaterial.getMaterial().getUnitMeasure().toString(),
+                                                        workMaterial.getMaterial().getUnitMeasure().getLabel()
                                                 ))
-                                                .quantityUnitMeasure(material.getQuantityUnitMeasure())
+                                                .quantityUnitMeasure(workMaterial.getBulkQuantity())
                                                 .build()
-                                ).collect(Collectors.toList())
+                                ).toList()
                         )
                         .build()
-        ).collect(Collectors.toList());
+        ).toList();
     }
 
+    public static WorkResponse convert(Work work) {
+        return WorkResponse.builder()
+                .id(work.getId())
+                .name(work.getName())
+                .laborPrice(work.getLaborPrice())
+                .materialPrice(work.getMaterialPrice())
+                .materialList(
+                        work.getMaterialList().stream().map(workMaterial ->
+                                BulkMaterialResponse.builder()
+                                        .id(workMaterial.getMaterial().getId())
+                                        .name(workMaterial.getMaterial().getName())
+                                        .price(workMaterial.getPrice())
+                                        .unitMeasure(new EnumDTO(
+                                                workMaterial.getMaterial().getUnitMeasure().toString(),
+                                                workMaterial.getMaterial().getUnitMeasure().getLabel()
+                                        ))
+                                        .quantityUnitMeasure(workMaterial.getBulkQuantity())
+                                        .build()
+                        ).toList()
+                )
+                .build();
+    }
 }

@@ -21,5 +21,5 @@ public class WorkRequest {
 
     private BigDecimal laborPrice;
 
-    private List<Long> materialIdList;
+    private List<BulkMaterialRequest> materialList;
 }

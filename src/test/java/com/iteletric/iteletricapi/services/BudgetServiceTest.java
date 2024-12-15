@@ -159,7 +159,7 @@ public class BudgetServiceTest {
 
     @Test
     void listCustomerBudgets_ShouldReturnCustomerBudgets() {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id")); // Adicione o sort correto
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
         User currentUser = new User();
         when(userService.getCurrentUser()).thenReturn(currentUser);
         when(budgetRepository.findByCustomer(currentUser, pageable)).thenReturn(Page.empty());

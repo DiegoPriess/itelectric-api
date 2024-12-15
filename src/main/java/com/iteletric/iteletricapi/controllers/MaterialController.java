@@ -51,7 +51,7 @@ public class MaterialController {
     @Operation(summary = "Buscar material por ID", description = "Recupera um material específico pelo seu ID")
     @GetMapping("/{materialId}")
     public ResponseEntity<MaterialResponse> getById(@Parameter(description = "ID do material") @PathVariable Long materialId) {
-        MaterialResponse material = materialService.getById(materialId);
+        MaterialResponse material = MaterialResponse.convert(materialService.getById(materialId));
         return new ResponseEntity<>(material, HttpStatus.OK);
     }
 

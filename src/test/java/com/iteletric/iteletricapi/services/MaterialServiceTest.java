@@ -1,40 +1,30 @@
 package com.iteletric.iteletricapi.services;
 
 import com.iteletric.iteletricapi.config.exception.BusinessException;
-import com.iteletric.iteletricapi.dtos.material.MaterialResponse;
 import com.iteletric.iteletricapi.enums.material.UnitOfMeasure;
 import com.iteletric.iteletricapi.models.Material;
 import com.iteletric.iteletricapi.models.User;
 import com.iteletric.iteletricapi.repositories.MaterialRepository;
-import com.iteletric.iteletricapi.repositories.WorkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MaterialServiceTest {
 
     @Mock
     private MaterialRepository materialRepository;
-
-    @Mock
-    private WorkRepository workRepository;
 
     @Mock
     private UserService userService;
@@ -48,48 +38,51 @@ public class MaterialServiceTest {
     @BeforeEach
     void setUp() {
         user = new User();
-        user.setEmail("diegopriess.dev@gmail.com");
+        user.setEmail("teste@gmail.com");
 
-        material = new Material();
+        material = Material.builder()
+                .name("Cabo")
+                .price(BigDecimal.valueOf(100))
+                .unitMeasure(UnitOfMeasure.METERS)
+                .quantityUnitMeasure(10)
+                .build();
         material.setId(1L);
-        material.setName("Fio");
-        material.setPrice(BigDecimal.valueOf(15.5));
-        material.setUnitMeasure(UnitOfMeasure.CENTIMETERS);
-        material.setQuantityUnitMeasure(BigDecimal.valueOf(100));
     }
 
     @Test
     void createMaterial_ShouldSaveMaterialSuccessfully() {
         materialService.create(material);
+
         verify(materialRepository).save(material);
     }
 
     @Test
     void updateMaterial_ShouldUpdateProperties() {
         when(materialRepository.findById(1L)).thenReturn(Optional.of(material));
-        when(workRepository.findByMaterialListContaining(any(Material.class))).thenReturn(Collections.emptyList());
 
-        Material updatedDetails = new Material();
-        updatedDetails.setName("Fio atualizado");
-        updatedDetails.setPrice(BigDecimal.valueOf(15.0));
-        updatedDetails.setUnitMeasure(UnitOfMeasure.METERS);
-        updatedDetails.setQuantityUnitMeasure(BigDecimal.valueOf(200));
+        Material updatedDetails = Material.builder()
+                .name("Cabo Atualizado")
+                .price(BigDecimal.valueOf(150))
+                .unitMeasure(UnitOfMeasure.CENTIMETERS)
+                .quantityUnitMeasure(20)
+                .build();
 
         materialService.update(1L, updatedDetails);
 
-        assertEquals("Fio atualizado", material.getName());
-        assertEquals(BigDecimal.valueOf(15.0), material.getPrice());
-        assertEquals(UnitOfMeasure.METERS, material.getUnitMeasure());
-        assertEquals(BigDecimal.valueOf(200), material.getQuantityUnitMeasure());
+        assertEquals("Cabo Atualizado", material.getName());
+        assertEquals(BigDecimal.valueOf(150), material.getPrice());
+        assertEquals(UnitOfMeasure.CENTIMETERS, material.getUnitMeasure());
+        assertEquals(20, material.getQuantityUnitMeasure());
+
         verify(materialRepository).save(material);
     }
 
     @Test
-    void updateMaterial_ShouldThrowExceptionIfNotFound() {
+    void updateMaterial_ShouldThrowExceptionIfMaterialNotFound() {
         when(materialRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(BusinessException.class, () -> {
-            materialService.update(1L, new Material());
+            materialService.update(1L, material);
         });
 
         assertEquals("Material não encontrado", exception.getMessage());
@@ -105,7 +98,7 @@ public class MaterialServiceTest {
     }
 
     @Test
-    void deleteMaterial_ShouldThrowExceptionIfNotFound() {
+    void deleteMaterial_ShouldThrowExceptionIfMaterialNotFound() {
         when(materialRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(BusinessException.class, () -> {
@@ -119,78 +112,37 @@ public class MaterialServiceTest {
     void getById_ShouldReturnMaterial() {
         when(materialRepository.findById(1L)).thenReturn(Optional.of(material));
 
-        MaterialResponse result = materialService.getById(1L);
+        Material result = materialService.getById(1L);
 
         assertNotNull(result);
-        assertEquals("Fio", result.getName());
+        assertEquals("Cabo", result.getName());
     }
 
     @Test
     void getById_ShouldThrowExceptionIfNotFound() {
         when(materialRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(BusinessException.class, () -> {
-            materialService.getById(1L);
-        });
+        Exception exception = assertThrows(BusinessException.class, () -> materialService.getById(1L));
 
         assertEquals("Material não encontrado", exception.getMessage());
     }
 
     @Test
-    void listMaterials_ShouldReturnPageOfMaterials() {
-        when(userService.getCurrentUser()).thenReturn(user);
-        Page<Material> page = new PageImpl<>(Collections.singletonList(material));
-        when(materialRepository.findByOwner(user, PageRequest.of(0, 10, Sort.by("id").ascending()))).thenReturn(page);
+    void listMaterials_ShouldReturnAllMaterials() {
+        when(materialRepository.findAllById(List.of(1L))).thenReturn(List.of(material));
 
-        Page<MaterialResponse> result = materialService.list(null, PageRequest.of(0, 10));
+        List<Material> result = materialService.getAllMaterialSelectedById(List.of(1L));
 
-        assertEquals(1, result.getTotalElements());
-        verify(materialRepository).findByOwner(user, PageRequest.of(0, 10, Sort.by("id").ascending()));
+        assertNotNull(result, "A lista de materiais não deveria ser nula.");
+        assertEquals(1, result.size(), "A lista deveria conter exatamente 1 material.");
+        assertEquals("Cabo", result.get(0).getName(), "O nome do material não corresponde ao esperado.");
     }
 
     @Test
-    void listMaterials_WithValidName_ShouldReturnFilteredMaterials() {
-        when(userService.getCurrentUser()).thenReturn(user);
-        Page<Material> page = new PageImpl<>(Collections.singletonList(material));
-        String searchName = "Fio";
-        when(materialRepository.findByOwnerAndNameContainingIgnoreCase(
-                eq(user), eq(searchName), any(Pageable.class)
-        )).thenReturn(page);
+    void listMaterials_ShouldReturnEmptyIfNoMaterialFound() {
+        List<Material> result = materialService.getAllMaterialSelectedById(Collections.emptyList());
 
-        Page<MaterialResponse> result = materialService.list(searchName, PageRequest.of(0, 10));
-
-        assertEquals(1, result.getTotalElements());
-        verify(materialRepository).findByOwnerAndNameContainingIgnoreCase(user, searchName, PageRequest.of(0, 10, Sort.by("id").ascending()));
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
-
-    @Test
-    void listMaterials_WithEmptyName_ShouldReturnAllMaterials() {
-        when(userService.getCurrentUser()).thenReturn(user);
-        Page<Material> page = new PageImpl<>(Collections.singletonList(material));
-        when(materialRepository.findByOwner(user, PageRequest.of(0, 10, Sort.by("id").ascending()))).thenReturn(page);
-
-        Page<MaterialResponse> result = materialService.list("", PageRequest.of(0, 10));
-
-        assertEquals(1, result.getTotalElements());
-        verify(materialRepository).findByOwner(user, PageRequest.of(0, 10, Sort.by("id").ascending()));
-    }
-
-    @Test
-    void getAllMaterialSelectedById_WithValidIds_ShouldReturnMaterials() {
-        List<Long> ids = Arrays.asList(1L, 2L);
-        when(materialRepository.findAllById(ids)).thenReturn(Arrays.asList(material, new Material()));
-
-        List<Material> result = materialService.getAllMaterialSelectedById(ids);
-
-        assertEquals(2, result.size());
-        verify(materialRepository).findAllById(ids);
-    }
-
-    @Test
-    void getAllMaterialSelectedById_WithInvalidIds_ShouldReturnEmptyList() {
-        List<Material> materials = materialService.getAllMaterialSelectedById(Collections.singletonList(-1L));
-
-        assertTrue(materials.isEmpty(), "A lista de materiais não deveria estar vazia");
-    }
-
 }

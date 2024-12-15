@@ -18,7 +18,7 @@ public class MaterialResponse {
     private String name;
     private BigDecimal price;
     private EnumDTO unitMeasure;
-    private BigDecimal quantityUnitMeasure;
+    private Integer quantityUnitMeasure;
 
     public static MaterialResponse convert(Material material) {
         return MaterialResponse.builder().id(material.getId())

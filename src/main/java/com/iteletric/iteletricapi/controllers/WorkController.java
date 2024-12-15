@@ -3,7 +3,6 @@ package com.iteletric.iteletricapi.controllers;
 import com.iteletric.iteletricapi.config.validation.ValidationGroups;
 import com.iteletric.iteletricapi.dtos.work.WorkRequest;
 import com.iteletric.iteletricapi.dtos.work.WorkResponse;
-import com.iteletric.iteletricapi.models.Work;
 import com.iteletric.iteletricapi.services.WorkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -52,8 +51,8 @@ public class WorkController {
 
     @Operation(summary = "Buscar trabalho por ID", description = "Recupera um trabalho específico pelo seu ID")
     @GetMapping("/{workId}")
-    public ResponseEntity<Work> getById(@Parameter(description = "ID do trabalho") @PathVariable Long workId) {
-        Work work = service.getById(workId);
+    public ResponseEntity<WorkResponse> getById(@Parameter(description = "ID do trabalho") @PathVariable Long workId) {
+        WorkResponse work = WorkResponse.convert(service.getById(workId));
         return new ResponseEntity<>(work, HttpStatus.OK);
     }
 

@@ -28,6 +28,6 @@ public class Material extends BaseModel {
     private UnitOfMeasure unitMeasure;
 
     @Column(name="quantity_unit_measure", nullable = false)
-    private BigDecimal quantityUnitMeasure;
+    private Integer quantityUnitMeasure;
 
 }

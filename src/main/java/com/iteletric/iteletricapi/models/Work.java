@@ -17,39 +17,21 @@ import java.util.List;
 @Entity
 @Table(name = "work")
 public class Work extends BaseModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name="name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name="labor_price", nullable = false)
+    @Column(name = "labor_price", nullable = false)
     private BigDecimal laborPrice;
 
-    @Column(name="material_price")
+    @Column(name = "material_price")
     private BigDecimal materialPrice;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(name="work_material",
-               joinColumns = @JoinColumn(name = "work_id"),
-               inverseJoinColumns = @JoinColumn(name="material_id"))
-    private List<Material> materialList;
-
-    public BigDecimal calculateMaterialPrice() {
-        BigDecimal total = BigDecimal.ZERO;
-
-        for (Material material : materialList) {
-            total = total.add(material.getPrice());
-        }
-
-        return total;
-    }
-
-    @PrePersist
-    @PreUpdate
-    public void preSave() {
-        this.materialPrice = calculateMaterialPrice();
-    }
+    @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BulkMaterial> materialList;
 }
