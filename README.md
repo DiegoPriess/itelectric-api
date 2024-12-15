@@ -49,10 +49,10 @@ Esse é o BACK-END do projeto, que também conta com um front-end disponíveL no
 ## Requisitos não funcionais
 | Identificação | Requisito Não Funcional                                                                | Descrição                                                                                                                              |
 |---------------|----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| **RNF.1**     | **Autenticação com Token JWT**                                                         | O sistema deve utilizar autenticação baseada em token JWT para garantir segurança no acesso às funcionalidades.                        |
-| **RNF.2**     | **Validação de Credenciais de Usuário**                                                | O sistema deve validar as credenciais de usuários (eletricistas e clientes) para garantir que apenas usuários autenticados acessem o sistema. |
-| **RNF.3**     | **Experiência do Usuário**                                                            | O sistema deve oferecer uma experiência de usuário intuitiva e fluida, com interfaces amigáveis e tempos de resposta rápidos.           |
-| **RNF.4**     | **Criptografia bcrypt**                                                                | As senhas dos usuários devem ser criptografadas utilizando o algoritmo bcrypt, garantindo a segurança dos dados sensíveis.              |
+| **RNF.1**     | **Deve realizar autenticação com Token JWT**                                                         | O sistema deve utilizar autenticação baseada em token JWT para garantir segurança no acesso às funcionalidades.                        |
+| **RNF.2**     | **Deve realizar a validação de Credenciais de Usuário**                                                | O sistema deve validar as credenciais de usuários (eletricistas e clientes) para garantir que apenas usuários autenticados acessem o sistema. |
+| **RNF.3**     | **Deve possuir uma boa experiência do Usuário**                                                            | O sistema deve oferecer uma experiência de usuário intuitiva e fluida, com interfaces amigáveis e tempos de resposta rápidos.           |
+| **RNF.4**     | **Deve possuir Criptografia bcrypt em senhas**                                                                | As senhas dos usuários devem ser criptografadas utilizando o algoritmo bcrypt, garantindo a segurança dos dados sensíveis.              |
 
 ## Pipelines
 
