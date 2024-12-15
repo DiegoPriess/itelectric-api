@@ -23,8 +23,8 @@ Esse é o BACK-END do projeto, que também conta com um front-end disponíveL no
 ### Dashboard Kanban [Jira](https://diegopriessdev.atlassian.net/jira/software/projects/KAN/boards/1)
 
 ## Caso de uso
-- [Eletrecista](https://drive.google.com/file/d/1l3A0ZCGIcX5V9Y6qvW6wbS0GbVXgzew1/view?usp=drive_link)
-- [Cliente](https://drive.google.com/file/d/1KJFFPJ2lbR7z0IVdrw9nnPSfcZCKsCum/view?usp=drive_link)
+- [Eletrecista](https://drive.google.com/file/d/1qZWYGzIsWvUt8_Ugef9yTZdGGL9fHAzg/view?usp=sharing)
+- [Cliente](https://drive.google.com/file/d/10Km0oQF8yjWEi9ikSMTLnfDDH5I-Q6ev/view?usp=sharing)
 
 ## Arquitetura C4
 - [NV.1](https://drive.google.com/file/d/1cjtWxbsxG7hVC8DEFkOR6WQd6ZeGkPWz/view?usp=sharing)
@@ -33,18 +33,18 @@ Esse é o BACK-END do projeto, que também conta com um front-end disponíveL no
 - [NV.4](https://drive.google.com/file/d/1lFf0mzdBJF32mfsSrSgtDDfgtEhdT7fF/view?usp=sharing)
 
 ## Requisitos funcionais
-| Identificação | Requisito Funcional                                                                 | Descrição                                                                                                                                      |
+| Identificação | Requisito Funcional                                                                  | Descrição                                                                                                                                      |
 |---------------|--------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| **RF.1**      | **Gerenciar Trabalhos**                                                              | Permitir o cadastro, edição e exclusão de trabalhos realizados pelos eletricistas.                                                              |
-| **RF.2**      | **Gestão de Material**                                                               | Controlar os materiais utilizados nos orçamentos e serviços prestados, incluindo a quantidade e o custo.                                        |
-| **RF.3**      | **Gerenciar Orçamento**                                                              | Criar, editar e excluir orçamentos, além de listar orçamentos existentes.                                                                       |
-| **RF.4**      | **Aprovação e Negação de Orçamentos**                                                 | Permitir que os eletricistas aprovem ou neguem orçamentos realizados para os clientes.                                                          |
-| **RF.5**      | **Login**                                                                            | Sistema de login para os eletricistas e clientes, garantindo segurança no acesso.                                                              |
-| **RF.6**      | **Registrar**                                                                         | Permitir o registro de novos usuários (eletricistas e clientes) no sistema.                                                                    |
+| **RF.1**      | **Deve permitir o gerenciameto de Trabalhos**                                        | Permitir o cadastro, edição e exclusão de trabalhos realizados pelos eletricistas.                                                              |
+| **RF.2**      | **Deve permitir o gerenciameto de Materiais**                                        | Controlar os materiais utilizados nos orçamentos e serviços prestados, incluindo a quantidade e o custo.                                        |
+| **RF.3**      | **Deve permitir o gerenciameto de Orçamentos**                                       | Criar, editar e excluir orçamentos, além de listar orçamentos existentes.                                                                       |
+| **RF.4**      | **Deve permitir Aprovação e Negação de Orçamentos**                                  | Permitir que os eletricistas aprovem ou neguem orçamentos realizados para os clientes.                                                          |
+| **RF.5**      | **Deve possuir Login**                                                               | Sistema de login para os eletricistas e clientes, garantindo segurança no acesso.                                                              |
+| **RF.6**      | **Deve possuir Registrar**                                                           | Permitir o registro de novos usuários (eletricistas e clientes) no sistema.                                                                    |
 | **RF.7**      | **Geração de Credenciais para Clientes Cadastrados em Orçamentos**                   | Gerar credenciais de acesso para clientes que tiverem orçamentos cadastrados.                                                                  |
-| **RF.8**      | **Envio de E-mail com Credenciais**                                                  | Enviar e-mails automáticos para os clientes com suas credenciais de acesso ao sistema.                                                         |
-| **RF.9**      | **Envio de E-mail e Notificação de Novo Orçamento**                                  | Enviar e-mails e notificações aos clientes quando um novo orçamento for registrado ou atualizado.                                              |
-| **RF.10**     | **Dashboard de Cliente com Informações de Todos Seus Orçamentos**                    | Fornecer um dashboard para os clientes com informações detalhadas sobre todos os seus orçamentos, mesmo quando realizados por diferentes eletricistas. |
+| **RF.8**      | **Deve possuir Envio de E-mail com Credenciais**                                     | Enviar e-mails automáticos para os clientes com suas credenciais de acesso ao sistema.                                                         |
+| **RF.9**      | **Deve possuir Envio de E-mail e Notificação de Novo Orçamento**                     | Enviar e-mails e notificações aos clientes quando um novo orçamento for registrado ou atualizado.                                              |
+| **RF.10**     | **Deve possuir Dashboard de Cliente com Informações de Todos Seus Orçamentos**       | Fornecer um dashboard para os clientes com informações detalhadas sobre todos os seus orçamentos, mesmo quando realizados por diferentes eletricistas. |
 
 ## Requisitos não funcionais
 | Identificação | Requisito Não Funcional                                                                | Descrição                                                                                                                              |
